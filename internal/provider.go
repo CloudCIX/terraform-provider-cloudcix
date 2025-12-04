@@ -58,16 +58,17 @@ func ProviderSchema(ctx context.Context) schema.Schema {
 				Description: "Set the base url that the provider connects to.",
 				Optional:    true,
 			},
-		"api_key": schema.StringAttribute{
-			Optional: true,
+			"api_key": schema.StringAttribute{
+				Optional: true,
+			},
+			"settings_file": schema.StringAttribute{
+				Description: "Path to a settings file containing CloudCIX credentials.",
+				Optional:    true,
+			},
 		},
-		"settings_file": schema.StringAttribute{
-			Description: "Path to a settings file containing CloudCIX credentials.",
-			Optional:    true,
-		},
-	},
+	}
 }
-}func (p *CloudCixCloudcixProvider) Schema(ctx context.Context, req provider.SchemaRequest, resp *provider.SchemaResponse) {
+func (p *CloudCixCloudcixProvider) Schema(ctx context.Context, req provider.SchemaRequest, resp *provider.SchemaResponse) {
 	resp.Schema = ProviderSchema(ctx)
 }
 
