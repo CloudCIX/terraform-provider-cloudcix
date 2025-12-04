@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.1.1 (2025-12-04)
+
+Full Changelog: [v0.1.0...v0.1.1](https://github.com/CloudCIX/terraform-provider-cloudcix/compare/v0.1.0...v0.1.1)
+
+### Chores
+
+* update SDK settings ([461f362](https://github.com/CloudCIX/terraform-provider-cloudcix/commit/461f362999e02041a0697c46c49c3e3db305a7cc))
+
 ## 0.1.0 (2025-12-04)
 
 Full Changelog: [v0.0.1...v0.1.0](https://github.com/CloudCIX/terraform-provider-cloudcix/compare/v0.0.1...v0.1.0)
