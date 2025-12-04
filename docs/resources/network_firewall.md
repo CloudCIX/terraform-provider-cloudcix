@@ -25,9 +25,7 @@ resource "cloudcix_network_firewall" "example_network_firewall" {
     port = "port"
     protocol = "protocol"
     source = "source"
-    zone = {
-
-    }
+    zone = "zone"
   }]
   type = "geo"
 }
@@ -62,8 +60,11 @@ Valid options are:
 
 ### Read-Only
 
-- `content` (Attributes) (see [below for nested schema](#nestedatt--content))
-- `id` (Number) The ID of this resource.
+- `created` (String) Timestamp, in ISO format, of when the Network Firewall record was created.
+- `id` (Number) The ID of the Network Firewall record
+- `specs` (Attributes List) An array of the specs for the Network Firewall (see [below for nested schema](#nestedatt--specs))
+- `updated` (String) Timestamp, in ISO format, of when the Network Firewall record was last updated.
+- `uri` (String) URL that can be used to run methods in the API associated with the Network Firewall instance.
 
 <a id="nestedatt--rules"></a>
 ### Nested Schema for `rules`
@@ -131,45 +132,18 @@ Supported options are:
   on-premises network.
 
 
-<a id="nestedatt--content"></a>
-### Nested Schema for `content`
-
-Read-Only:
-
-- `created` (String) Timestamp, in ISO format, of when the Network Firewall record was created.
-- `id` (Number) The ID of the Network Firewall record
-- `name` (String) The user-friendly name given to this Network Firewall instance
-- `project_id` (Number) The id of the Project that this Network Firewall belongs to
-- `rules` (Attributes List) List of rules for this Network Firewall. (see [below for nested schema](#nestedatt--content--rules))
-- `specs` (Attributes List) An array of the specs for the Network Firewall (see [below for nested schema](#nestedatt--content--specs))
-- `state` (String) The current state of the Network Firewall
-- `type` (String) The type of the Network Firewall
-- `updated` (String) Timestamp, in ISO format, of when the Network Firewall record was last updated.
-- `uri` (String) URL that can be used to run methods in the API associated with the Network Firewall instance.
-
-<a id="nestedatt--content--rules"></a>
-### Nested Schema for `content.rules`
-
-Read-Only:
-
-- `allow` (Boolean) True to allow traffic, False to deny.
-- `description` (String) Optional description of the rule. Returned if the type is "project".
-- `destination` (String) Destination address or subnet. Use * for any. Returned if the type is "project".
-- `group_name` (String) The name of the Geo IP Address Group. Returned if the type is "geo".
-- `inbound` (Boolean) True if the rule applies to inbound traffic.
-- `order` (Number) Order of rule evaluation (lower runs first). Returned if the type is "project".
-- `port` (String) Port or port range (e.g. 80, 443, 1000-2000). Not required for ICMP or ANY.
-Returned if the type is "project".
-- `protocol` (String) Network protocol (any, icmp, tcp, udp). Returned if the type is "project".
-- `source` (String) Source address or subnet. Use * for any. Returned if the type is "project".
-- `version` (Number) IP version (4 or 6). Returned if the type is "project".
-- `zone` (String) The zone in the firewall that the rule is applied to.
-
-
-<a id="nestedatt--content--specs"></a>
-### Nested Schema for `content.specs`
+<a id="nestedatt--specs"></a>
+### Nested Schema for `specs`
 
 Read-Only:
 
 - `quantity` (Number) How many units of a billable entity that a Resource utilises
 - `sku_name` (String) An identifier for a billable entity that a Resource utilises
+
+## Import
+
+Import is supported using the following syntax:
+
+```shell
+$ terraform import cloudcix_network_firewall.example '<id>'
+```
