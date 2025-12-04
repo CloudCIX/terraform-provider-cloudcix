@@ -22,7 +22,7 @@ func main() {
 	flag.Parse()
 
 	opts := providerserver.ServeOpts{
-		Address: "registry.terraform.io/CloudCIX/cloudcix",
+		Address: "registry.terraform.io/CloudCIX/CloudCIX/cloudcix",
 		Debug:   debug,
 	}
 
