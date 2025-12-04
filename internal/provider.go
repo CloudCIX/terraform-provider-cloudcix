@@ -7,6 +7,8 @@ import (
 	"os"
 
 	"github.com/CloudCIX/gocloudcix"
+	"github.com/CloudCIX/gocloudcix/auth"
+	"github.com/CloudCIX/gocloudcix/config"
 	"github.com/CloudCIX/gocloudcix/option"
 	"github.com/CloudCIX/terraform-provider-cloudcix/internal/services/compute_backup"
 	"github.com/CloudCIX/terraform-provider-cloudcix/internal/services/compute_gpu"
@@ -39,8 +41,9 @@ type CloudCixCloudcixProvider struct {
 
 // CloudCixCloudcixProviderModel describes the provider data model.
 type CloudCixCloudcixProviderModel struct {
-	BaseURL types.String `tfsdk:"base_url" json:"base_url,optional"`
-	APIKey  types.String `tfsdk:"api_key" json:"api_key,optional"`
+	BaseURL      types.String `tfsdk:"base_url" json:"base_url,optional"`
+	APIKey       types.String `tfsdk:"api_key" json:"api_key,optional"`
+	SettingsFile types.String `tfsdk:"settings_file" json:"settings_file,optional"`
 }
 
 func (p *CloudCixCloudcixProvider) Metadata(ctx context.Context, req provider.MetadataRequest, resp *provider.MetadataResponse) {
@@ -58,10 +61,13 @@ func ProviderSchema(ctx context.Context) schema.Schema {
 			"api_key": schema.StringAttribute{
 				Optional: true,
 			},
+			"settings_file": schema.StringAttribute{
+				Description: "Path to a settings file containing CloudCIX credentials.",
+				Optional:    true,
+			},
 		},
 	}
 }
-
 func (p *CloudCixCloudcixProvider) Schema(ctx context.Context, req provider.SchemaRequest, resp *provider.SchemaResponse) {
 	resp.Schema = ProviderSchema(ctx)
 }
@@ -72,26 +78,60 @@ func (p *CloudCixCloudcixProvider) Configure(ctx context.Context, req provider.C
 
 	resp.Diagnostics.Append(req.Config.Get(ctx, &data)...)
 
-	opts := []option.RequestOption{}
-
-	if !data.BaseURL.IsNull() && !data.BaseURL.IsUnknown() {
-		opts = append(opts, option.WithBaseURL(data.BaseURL.ValueString()))
-	} else if o, ok := os.LookupEnv("GOCLOUDCIX_BASE_URL"); ok {
-		opts = append(opts, option.WithBaseURL(o))
+	if resp.Diagnostics.HasError() {
+		return
 	}
 
-	if !data.APIKey.IsNull() && !data.APIKey.IsUnknown() {
-		opts = append(opts, option.WithAPIKey(data.APIKey.ValueString()))
-	} else if o, ok := os.LookupEnv("GOCLOUDCIX_API_KEY"); ok {
-		opts = append(opts, option.WithAPIKey(o))
-	} else {
-		resp.Diagnostics.AddAttributeError(
-			path.Root("api_key"),
-			"Missing api_key value",
-			"The api_key field is required. Set it in provider configuration or via the \"GOCLOUDCIX_API_KEY\" environment variable.",
+	// Load settings from file if provided, otherwise from environment
+	var settingsFile string
+	if !data.SettingsFile.IsNull() && !data.SettingsFile.IsUnknown() {
+		settingsFile = data.SettingsFile.ValueString()
+	}
+
+	settings, err := config.LoadSettings(settingsFile)
+	if err != nil {
+		resp.Diagnostics.AddError(
+			"Failed to load settings",
+			"Could not load CloudCIX settings: "+err.Error(),
 		)
 		return
 	}
+
+	// Allow provider config to override settings
+	if !data.BaseURL.IsNull() && !data.BaseURL.IsUnknown() {
+		settings.CLOUDCIX_API_URL = data.BaseURL.ValueString()
+	} else if o, ok := os.LookupEnv("CLOUDCIX_BASE_URL"); ok {
+		// Backward compatibility for CLOUDCIX_BASE_URL
+		settings.CLOUDCIX_API_URL = o
+	}
+
+	if !data.APIKey.IsNull() && !data.APIKey.IsUnknown() {
+		settings.CLOUDCIX_API_KEY = data.APIKey.ValueString()
+	}
+
+	opts := []option.RequestOption{}
+
+	// Determine authentication method
+	// 1. Auto Auth (Username + Password + API Key)
+	if settings.CLOUDCIX_API_USERNAME != "" && settings.CLOUDCIX_API_PASSWORD != "" && settings.CLOUDCIX_API_KEY != "" {
+		tokenManager := auth.NewTokenManager(settings)
+		opts = append(opts, auth.WithAutoAuth(tokenManager))
+	} else if settings.CLOUDCIX_API_KEY != "" {
+		// 2. Static Token Auth (API Key treated as Session Token)
+		// This supports the legacy behavior where api_key was the session token
+		opts = append(opts, option.WithAPIKey(settings.CLOUDCIX_API_KEY))
+	} else {
+		resp.Diagnostics.AddAttributeError(
+			path.Root("api_key"),
+			"Missing credentials",
+			"The provider requires either a settings file/env vars with full credentials (username, password, api_key) for auto-auth, or a static session token via api_key.",
+		)
+		return
+	}
+
+	// Set Base URL
+	// Use the Compute URL from settings which handles the subdomain logic
+	opts = append(opts, option.WithBaseURL(settings.ComputeURL()))
 
 	client := gocloudcix.NewClient(
 		opts...,
