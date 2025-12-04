@@ -23,15 +23,7 @@ data "cloudcix_compute_image" "example_compute_image" {
 
 ### Read-Only
 
-- `content` (Attributes) (see [below for nested schema](#nestedatt--content))
-- `id` (Number) The ID of this resource.
-
-<a id="nestedatt--content"></a>
-### Nested Schema for `content`
-
-Read-Only:
-
 - `filename` (String) The name of the file containing the Image.
-- `id` (Number) The ID of the Image.
+- `id` (Number) The ID of this resource.
 - `os_variant` (String) Is a unique word to define each Image.
 - `sku_name` (String) The name of the Image.

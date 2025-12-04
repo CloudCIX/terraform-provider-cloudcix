@@ -55,8 +55,12 @@ Users can only request state changes from certain current states:
 
 ### Read-Only
 
-- `content` (Attributes) (see [below for nested schema](#nestedatt--content))
-- `id` (Number) The ID of this resource.
+- `contra_instances` (Attributes List) A list of Compute Instances the Storage Volume is mounted to. (see [below for nested schema](#nestedatt--contra_instances))
+- `created` (String) Timestamp, in ISO format, of when the Storage Volume was created.
+- `id` (Number) The ID of the Storage Volume record
+- `instance` (Attributes) The "hyperv" Compute Instance the "hyperv" Storage Volume is attached to. (see [below for nested schema](#nestedatt--instance))
+- `updated` (String) Timestamp, in ISO format, of when the Storage Volume was last updated.
+- `uri` (String) URL that can be used to run methods in the API associated with the Storage Volumes instance.
 
 <a id="nestedatt--specs"></a>
 ### Nested Schema for `specs`
@@ -79,26 +83,8 @@ unmount this Ceph file system volume from. If not sent, it will default to an em
 - `mount_path` (String) The mount path for the Ceph file system volume inside the LXC instance.
 
 
-<a id="nestedatt--content"></a>
-### Nested Schema for `content`
-
-Read-Only:
-
-- `contra_instances` (Attributes List) A list of Compute Instances the Storage Volume is mounted to. (see [below for nested schema](#nestedatt--content--contra_instances))
-- `created` (String) Timestamp, in ISO format, of when the Storage Volume was created.
-- `id` (Number) The ID of the Storage Volume record
-- `instance` (Attributes) The "hyperv" Compute Instance the "hyperv" Storage Volume is attached to. (see [below for nested schema](#nestedatt--content--instance))
-- `metadata` (Attributes) The metadata object of "ceph" Storage Volumes (see [below for nested schema](#nestedatt--content--metadata))
-- `name` (String) The user-friendly name given to this Storage Volume
-- `project_id` (Number) The ID of the Project that this Storage Volume belongs to
-- `specs` (Attributes List) An array of the specs for the Storage Volume (see [below for nested schema](#nestedatt--content--specs))
-- `state` (String) The current state of the Storage Volume
-- `type` (String) The type of the Storage Volume
-- `updated` (String) Timestamp, in ISO format, of when the Storage Volume was last updated.
-- `uri` (String) URL that can be used to run methods in the API associated with the Storage Volumes instance.
-
-<a id="nestedatt--content--contra_instances"></a>
-### Nested Schema for `content.contra_instances`
+<a id="nestedatt--contra_instances"></a>
+### Nested Schema for `contra_instances`
 
 Read-Only:
 
@@ -107,8 +93,8 @@ Read-Only:
 - `state` (String) The current state of the Compute Instance the Storage Volume is attached to.
 
 
-<a id="nestedatt--content--instance"></a>
-### Nested Schema for `content.instance`
+<a id="nestedatt--instance"></a>
+### Nested Schema for `instance`
 
 Read-Only:
 
@@ -116,21 +102,10 @@ Read-Only:
 - `name` (String) The user-friendly name of the "hyperv" Compute Instance the "hyperv" Storage Volume is attached to.
 - `state` (String) The current state of the "hyperv" Compute Instance the "hyperv" Storage Volume is attached to.
 
+## Import
 
-<a id="nestedatt--content--metadata"></a>
-### Nested Schema for `content.metadata`
+Import is supported using the following syntax:
 
-Read-Only:
-
-- `attach_instance_ids` (List of Number) List of IDs of "lxd" Compute instances which the "ceph" Storage Volume should be attached to.
-- `detach_instance_ids` (List of Number) List of IDs of "lxd" Compute instances which the "ceph" Storage Volume should be detached from.
-- `mount_path` (String) The mpunt path of the "ceph" Storage Volume on the "lxd" Compute instances.
-
-
-<a id="nestedatt--content--specs"></a>
-### Nested Schema for `content.specs`
-
-Read-Only:
-
-- `quantity` (Number) How many units of a billable entity that a Resource utilises
-- `sku_name` (String) An identifier for a billable entity that a Resource utilises
+```shell
+$ terraform import cloudcix_storage_volume.example '<id>'
+```
