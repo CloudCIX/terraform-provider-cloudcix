@@ -2,4 +2,4 @@
 
 set -e
 
-go build -o terraform-provider-cloudcix
+go build -o terraform-provider-cloud-cix-cloudcix
