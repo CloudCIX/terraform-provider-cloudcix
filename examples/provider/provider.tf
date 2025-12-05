@@ -1,3 +1,3 @@
-provider "cloud-cix-cloudcix" {
+provider "cloudcix" {
   api_key = "My API Key"
 }

@@ -1,6 +1,6 @@
 # Gocloudcix Terraform Provider
 
-The [Gocloudcix Terraform provider](https://registry.terraform.io/providers/CloudCIX/CloudCIX/cloudcix/latest/docs) provides convenient access to
+The [Gocloudcix Terraform provider](https://registry.terraform.io/providers/CloudCIX/cloudcix/latest/docs) provides convenient access to
 the [Gocloudcix REST API](https://compute.api.cloudcix.com/documentation/) from Terraform.
 
 It is generated with [Stainless](https://www.stainless.com/).
@@ -20,20 +20,20 @@ Add the following to your `main.tf` file:
 # Declare the provider and version
 terraform {
   required_providers {
-    cloud-cix-cloudcix = {
-      source  = "CloudCIX/CloudCIX/cloudcix"
-      version = "~> 0.1.1"
+    cloudcix = {
+      source  = "CloudCIX/cloudcix"
+      version = "~> 0.2.0"
     }
   }
 }
 
 # Initialize the provider
-provider "cloud-cix-cloudcix" {
+provider "cloudcix" {
   api_key = "My API Key" # or set GOCLOUDCIX_API_KEY env variable
 }
 
 # Configure a resource
-resource "cloud-cix-cloudcix_compute_backup" "example_compute_backup" {
+resource "cloudcix_compute_backup" "example_compute_backup" {
 
 }
 ```
@@ -43,7 +43,7 @@ resource "cloud-cix-cloudcix_compute_backup" "example_compute_backup" {
 Initialize your project by running `terraform init` in the directory.
 
 Additional examples can be found in the [./examples](./examples) folder within this repository, and you can
-refer to the full documentation on [the Terraform Registry](https://registry.terraform.io/providers/CloudCIX/CloudCIX/cloudcix/latest/docs).
+refer to the full documentation on [the Terraform Registry](https://registry.terraform.io/providers/CloudCIX/cloudcix/latest/docs).
 
 ### Provider Options
 

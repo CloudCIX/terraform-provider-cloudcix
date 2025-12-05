@@ -20,4 +20,4 @@ linux*)
 esac
 
 go mod tidy
-exec -- "$EXEC" generate -rendered-provider-name "Cloud Cix Cloudcix" -provider-name="cloud-cix-cloudcix"
+exec -- "$EXEC" generate -rendered-provider-name "Cloudcix" -provider-name="cloudcix"
