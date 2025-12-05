@@ -26,7 +26,7 @@ Then edit (or create) your `~/.terraformrc` to look something like this:
 ```hcl
   provider_installation {
     dev_overrides {
-      "CloudCIX/CloudCIX/cloudcix" = "/local/path/to/this/repo"
+      "CloudCIX/cloudcix" = "/local/path/to/this/repo"
     }
     direct {}
   }
