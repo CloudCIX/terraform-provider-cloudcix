@@ -29,25 +29,25 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
-var _ provider.ProviderWithConfigValidators = (*CloudCixCloudcixProvider)(nil)
+var _ provider.ProviderWithConfigValidators = (*CloudcixProvider)(nil)
 
-// CloudCixCloudcixProvider defines the provider implementation.
-type CloudCixCloudcixProvider struct {
+// CloudcixProvider defines the provider implementation.
+type CloudcixProvider struct {
 	// version is set to the provider version on release, "dev" when the
 	// provider is built and ran locally, and "test" when running acceptance
 	// testing.
 	version string
 }
 
-// CloudCixCloudcixProviderModel describes the provider data model.
-type CloudCixCloudcixProviderModel struct {
+// CloudcixProviderModel describes the provider data model.
+type CloudcixProviderModel struct {
 	BaseURL      types.String `tfsdk:"base_url" json:"base_url,optional"`
 	APIKey       types.String `tfsdk:"api_key" json:"api_key,optional"`
 	SettingsFile types.String `tfsdk:"settings_file" json:"settings_file,optional"`
 }
 
-func (p *CloudCixCloudcixProvider) Metadata(ctx context.Context, req provider.MetadataRequest, resp *provider.MetadataResponse) {
-	resp.TypeName = "cloud-cix-cloudcix"
+func (p *CloudcixProvider) Metadata(ctx context.Context, req provider.MetadataRequest, resp *provider.MetadataResponse) {
+	resp.TypeName = "cloudcix"
 	resp.Version = p.version
 }
 
@@ -68,13 +68,14 @@ func ProviderSchema(ctx context.Context) schema.Schema {
 		},
 	}
 }
-func (p *CloudCixCloudcixProvider) Schema(ctx context.Context, req provider.SchemaRequest, resp *provider.SchemaResponse) {
+
+func (p *CloudcixProvider) Schema(ctx context.Context, req provider.SchemaRequest, resp *provider.SchemaResponse) {
 	resp.Schema = ProviderSchema(ctx)
 }
 
-func (p *CloudCixCloudcixProvider) Configure(ctx context.Context, req provider.ConfigureRequest, resp *provider.ConfigureResponse) {
+func (p *CloudcixProvider) Configure(ctx context.Context, req provider.ConfigureRequest, resp *provider.ConfigureResponse) {
 
-	var data CloudCixCloudcixProviderModel
+	var data CloudcixProviderModel
 
 	resp.Diagnostics.Append(req.Config.Get(ctx, &data)...)
 
@@ -141,11 +142,11 @@ func (p *CloudCixCloudcixProvider) Configure(ctx context.Context, req provider.C
 	resp.ResourceData = &client
 }
 
-func (p *CloudCixCloudcixProvider) ConfigValidators(_ context.Context) []provider.ConfigValidator {
+func (p *CloudcixProvider) ConfigValidators(_ context.Context) []provider.ConfigValidator {
 	return []provider.ConfigValidator{}
 }
 
-func (p *CloudCixCloudcixProvider) Resources(ctx context.Context) []func() resource.Resource {
+func (p *CloudcixProvider) Resources(ctx context.Context) []func() resource.Resource {
 	return []func() resource.Resource{
 		compute_backup.NewResource,
 		compute_gpu.NewResource,
@@ -160,7 +161,7 @@ func (p *CloudCixCloudcixProvider) Resources(ctx context.Context) []func() resou
 	}
 }
 
-func (p *CloudCixCloudcixProvider) DataSources(ctx context.Context) []func() datasource.DataSource {
+func (p *CloudcixProvider) DataSources(ctx context.Context) []func() datasource.DataSource {
 	return []func() datasource.DataSource{
 		compute_backup.NewComputeBackupDataSource,
 		compute_gpu.NewComputeGPUDataSource,
@@ -178,7 +179,7 @@ func (p *CloudCixCloudcixProvider) DataSources(ctx context.Context) []func() dat
 
 func NewProvider(version string) func() provider.Provider {
 	return func() provider.Provider {
-		return &CloudCixCloudcixProvider{
+		return &CloudcixProvider{
 			version: version,
 		}
 	}
