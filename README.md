@@ -29,7 +29,7 @@ terraform {
 
 # Initialize the provider
 provider "cloudcix" {
-  api_key = "My API Key" # or set GOCLOUDCIX_API_KEY env variable
+  settings_file = "/path/to/my_settings.env"
 }
 
 # Configure a resource

@@ -1,3 +1,3 @@
 provider "cloudcix" {
-  api_key = "My API Key"
+  settings_file = "/path/to/my_settings.env"
 }
