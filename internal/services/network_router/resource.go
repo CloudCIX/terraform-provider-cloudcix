@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"io"
 	"net/http"
+	"time"
 
 	"github.com/CloudCIX/gocloudcix"
 	"github.com/CloudCIX/gocloudcix/option"
@@ -15,6 +16,7 @@ import (
 	"github.com/CloudCIX/terraform-provider-cloudcix/internal/logging"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/types"
+	"github.com/hashicorp/terraform-plugin-log/tflog"
 )
 
 // Ensure provider defined types fully satisfy framework interfaces.
@@ -63,6 +65,19 @@ func (r *NetworkRouterResource) Create(ctx context.Context, req resource.CreateR
 		return
 	}
 
+	// Get timeout from configuration
+	createTimeout, diags := data.Timeouts.Create(ctx, 30*time.Minute)
+	resp.Diagnostics.Append(diags...)
+	if resp.Diagnostics.HasError() {
+		return
+	}
+
+	// Create context with timeout
+	ctx, cancel := context.WithTimeout(ctx, createTimeout)
+	defer cancel()
+
+	tflog.Info(ctx, "Creating network router")
+
 	dataBytes, err := data.MarshalJSON()
 	if err != nil {
 		resp.Diagnostics.AddError("failed to serialize http request", err.Error())
@@ -89,7 +104,94 @@ func (r *NetworkRouterResource) Create(ctx context.Context, req resource.CreateR
 	}
 	data = &env.Content
 
+	tflog.Info(ctx, "Network router created, waiting for running state", map[string]interface{}{
+		"router_id": data.ID.ValueInt64(),
+	})
+
+	// Wait for state to become "running"
+	err = r.waitForRunningState(ctx, data.ID.ValueInt64())
+	if err != nil {
+		resp.Diagnostics.AddError("failed waiting for router to reach running state", err.Error())
+		return
+	}
+
+	tflog.Info(ctx, "Network router is now running")
+
+	// Refresh data after state is running
+	res = new(http.Response)
+	env = NetworkRouterContentEnvelope{*data}
+	_, err = r.client.Network.Routers.Get(
+		ctx,
+		data.ID.ValueInt64(),
+		option.WithResponseBodyInto(&res),
+		option.WithMiddleware(logging.Middleware(ctx)),
+	)
+	if err != nil {
+		resp.Diagnostics.AddError("failed to read router after creation", err.Error())
+		return
+	}
+	bytes, _ = io.ReadAll(res.Body)
+	err = apijson.UnmarshalComputed(bytes, &env)
+	if err != nil {
+		resp.Diagnostics.AddError("failed to deserialize http request", err.Error())
+		return
+	}
+	data = &env.Content
+
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
+}
+
+// waitForRunningState polls the router until its state is "running"
+func (r *NetworkRouterResource) waitForRunningState(ctx context.Context, routerID int64) error {
+	ticker := time.NewTicker(10 * time.Second)
+	defer ticker.Stop()
+
+	startTime := time.Now()
+
+	for {
+		select {
+		case <-ctx.Done():
+			return fmt.Errorf("timeout waiting for router to reach running state: %w", ctx.Err())
+		case <-ticker.C:
+			elapsed := time.Since(startTime)
+
+			res := new(http.Response)
+			_, err := r.client.Network.Routers.Get(
+				ctx,
+				routerID,
+				option.WithResponseBodyInto(&res),
+				option.WithMiddleware(logging.Middleware(ctx)),
+			)
+			if err != nil {
+				return fmt.Errorf("failed to check router state: %w", err)
+			}
+
+			bytes, _ := io.ReadAll(res.Body)
+			var env NetworkRouterContentEnvelope
+			err = apijson.Unmarshal(bytes, &env)
+			if err != nil {
+				return fmt.Errorf("failed to parse router state: %w", err)
+			}
+
+			state := env.Content.State.ValueString()
+
+			// Log current state with elapsed time
+			tflog.Debug(ctx, "Checking router state", map[string]interface{}{
+				"router_id": routerID,
+				"state":     state,
+				"elapsed":   elapsed.String(),
+			})
+
+			if state == "running" {
+				return nil
+			}
+
+			// Check for error states
+			if state == "error" || state == "failed" {
+				return fmt.Errorf("router entered error state: %s", state)
+			}
+		}
+	}
 }
 
 func (r *NetworkRouterResource) Update(ctx context.Context, req resource.UpdateRequest, resp *resource.UpdateResponse) {
