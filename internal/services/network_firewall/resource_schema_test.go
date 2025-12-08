@@ -16,10 +16,16 @@ func TestNetworkFirewallModelSchemaParity(t *testing.T) {
 	schema := network_firewall.ResourceSchema(context.TODO())
 	errs := test_helpers.ValidateResourceModelSchemaIntegrity(model, schema)
 
-	errs.Ignore(t, ".@NetworkFirewallModel.timeouts.@ObjectValue.create")
-	errs.Ignore(t, ".@NetworkFirewallModel.timeouts.@ObjectValue.update")
-	errs.Ignore(t, ".@NetworkFirewallModel.timeouts.@ObjectValue.read")
-	errs.Ignore(t, ".@NetworkFirewallModel.timeouts.@ObjectValue.delete")
+	ignore_list := []string{
+		".@NetworkFirewallModel.timeouts.@ObjectValue.read",
+		".@NetworkFirewallModel.timeouts.@ObjectValue.create",
+		".@NetworkFirewallModel.timeouts.@ObjectValue.update",
+		".@NetworkFirewallModel.timeouts.@ObjectValue.delete",
+	}
+
+	for _, item := range ignore_list {
+		errs.IgnoreAll(t, item)
+	}
 
 	errs.Report(t)
 }

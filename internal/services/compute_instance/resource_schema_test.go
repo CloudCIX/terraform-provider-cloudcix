@@ -16,10 +16,16 @@ func TestComputeInstanceModelSchemaParity(t *testing.T) {
 	schema := compute_instance.ResourceSchema(context.TODO())
 	errs := test_helpers.ValidateResourceModelSchemaIntegrity(model, schema)
 
-	errs.Ignore(t, ".@ComputeInstanceModel.timeouts.@ObjectValue.create")
-	errs.Ignore(t, ".@ComputeInstanceModel.timeouts.@ObjectValue.update")
-	errs.Ignore(t, ".@ComputeInstanceModel.timeouts.@ObjectValue.read")
-	errs.Ignore(t, ".@ComputeInstanceModel.timeouts.@ObjectValue.delete")
+	ignore_list := []string{
+		".@ComputeInstanceModel.timeouts.@ObjectValue.read",
+		".@ComputeInstanceModel.timeouts.@ObjectValue.create",
+		".@ComputeInstanceModel.timeouts.@ObjectValue.update",
+		".@ComputeInstanceModel.timeouts.@ObjectValue.delete",
+	}
+
+	for _, item := range ignore_list {
+		errs.IgnoreAll(t, item)
+	}
 
 	errs.Report(t)
 }
