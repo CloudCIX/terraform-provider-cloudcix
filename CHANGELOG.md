@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.3.0 (2025-12-08)
+
+Full Changelog: [v0.2.3...v0.3.0](https://github.com/CloudCIX/terraform-provider-cloudcix/compare/v0.2.3...v0.3.0)
+
+### Features
+
+* **api:** manual updates ([8004f99](https://github.com/CloudCIX/terraform-provider-cloudcix/commit/8004f99c0f61f8d1bb97d849a2a0ac45a115dabf))
+
 ## 0.2.3 (2025-12-08)
 
 Full Changelog: [v0.2.2...v0.2.3](https://github.com/CloudCIX/terraform-provider-cloudcix/compare/v0.2.2...v0.2.3)
