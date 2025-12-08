@@ -23,13 +23,19 @@ resource "cloudcix_network_router" "example_network_router" {
   name = "Public Website Router"
   networks = [{
     ipv4 = "10.0.1.0/24"
+    ipv6 = "ipv6"
     name = "web-tier"
+    vlan = 0
   }, {
     ipv4 = "10.0.2.0/24"
+    ipv6 = "ipv6"
     name = "app-tier"
+    vlan = 0
   }, {
     ipv4 = "10.0.3.0/24"
+    ipv6 = "ipv6"
     name = "db-tier"
+    vlan = 0
   }]
   type = "router"
 }
@@ -110,6 +116,11 @@ Optional:
 
 - `ipv4` (String) The IPv4 address range of the network
 - `name` (String) The name of the network
+
+Read-Only:
+
+- `ipv6` (String) The IPv6 address range of the network
+- `vlan` (Number) The VLAN of the network
 
 
 <a id="nestedatt--specs"></a>
