@@ -1,5 +1,14 @@
 # Changelog
 
+## 0.2.3 (2025-12-08)
+
+Full Changelog: [v0.2.2...v0.2.3](https://github.com/CloudCIX/terraform-provider-cloudcix/compare/v0.2.2...v0.2.3)
+
+### Bug Fixes
+
+* errs.Ignore ([9edddc0](https://github.com/CloudCIX/terraform-provider-cloudcix/commit/9edddc083584b1e217c2b7ce05fe8ce96930942c))
+* test ([6124638](https://github.com/CloudCIX/terraform-provider-cloudcix/commit/61246387c57fd94c5d49b4093c40b128882c8a3e))
+
 ## 0.2.2 (2025-12-05)
 
 Full Changelog: [v0.2.1...v0.2.2](https://github.com/CloudCIX/terraform-provider-cloudcix/compare/v0.2.1...v0.2.2)
