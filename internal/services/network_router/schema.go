@@ -61,11 +61,14 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 			},
 			"networks": schema.ListNestedAttribute{
 				Description: "Option if type is \"router\". If not sent, defaults will be applied.\n\nAn array of the list of networks defined on the Router. To create a new network on the Network\nRouter, append an object to the list with an `ipv4` key for an available RFC 1918 address range. The `ipv6`\nand `vlan` values will be generated based on what is available in the region. If networks is not sent, the\ndefault address range 10.0.0.1/24 will be assigned to `ipv4`.",
+				Computed:    true,
 				Optional:    true,
+				CustomType:  customfield.NewNestedObjectListType[NetworkRouterNetworksModel](ctx),
 				NestedObject: schema.NestedAttributeObject{
 					Attributes: map[string]schema.Attribute{
 						"ipv4": schema.StringAttribute{
 							Description: "The IPv4 address range of the network",
+							Computed:    true,
 							Optional:    true,
 						},
 						"name": schema.StringAttribute{
