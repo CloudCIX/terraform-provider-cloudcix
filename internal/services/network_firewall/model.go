@@ -5,6 +5,7 @@ package network_firewall
 import (
 	"github.com/CloudCIX/terraform-provider-cloudcix/internal/apijson"
 	"github.com/CloudCIX/terraform-provider-cloudcix/internal/customfield"
+	"github.com/hashicorp/terraform-plugin-framework-timeouts/resource/timeouts"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
@@ -23,6 +24,7 @@ type NetworkFirewallModel struct {
 	Updated   types.String                                            `tfsdk:"updated" json:"updated,computed"`
 	Uri       types.String                                            `tfsdk:"uri" json:"uri,computed"`
 	Specs     customfield.NestedObjectList[NetworkFirewallSpecsModel] `tfsdk:"specs" json:"specs,computed"`
+	Timeouts  timeouts.Value                                          `tfsdk:"timeouts"`
 }
 
 func (m NetworkFirewallModel) MarshalJSON() (data []byte, err error) {

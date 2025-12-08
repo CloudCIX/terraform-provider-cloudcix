@@ -4,6 +4,7 @@ package compute_instance
 
 import (
 	"github.com/CloudCIX/terraform-provider-cloudcix/internal/apijson"
+	"github.com/hashicorp/terraform-plugin-framework-timeouts/resource/timeouts"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
@@ -24,6 +25,7 @@ type ComputeInstanceModel struct {
 	Created     types.String                       `tfsdk:"created" json:"created,computed"`
 	Updated     types.String                       `tfsdk:"updated" json:"updated,computed"`
 	Uri         types.String                       `tfsdk:"uri" json:"uri,computed"`
+	Timeouts    timeouts.Value                     `tfsdk:"timeouts"`
 }
 
 func (m ComputeInstanceModel) MarshalJSON() (data []byte, err error) {
