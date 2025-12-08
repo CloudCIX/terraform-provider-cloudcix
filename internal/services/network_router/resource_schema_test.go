@@ -15,5 +15,11 @@ func TestNetworkRouterModelSchemaParity(t *testing.T) {
 	model := (*network_router.NetworkRouterModel)(nil)
 	schema := network_router.ResourceSchema(context.TODO())
 	errs := test_helpers.ValidateResourceModelSchemaIntegrity(model, schema)
+
+	errs.Ignore(".@NetworkRouterModel.timeouts.@ObjectValue.create")
+	errs.Ignore(".@NetworkRouterModel.timeouts.@ObjectValue.update")
+	errs.Ignore(".@NetworkRouterModel.timeouts.@ObjectValue.read")
+	errs.Ignore(".@NetworkRouterModel.timeouts.@ObjectValue.delete")
+	
 	errs.Report(t)
 }

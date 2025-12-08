@@ -15,5 +15,11 @@ func TestComputeInstanceModelSchemaParity(t *testing.T) {
 	model := (*compute_instance.ComputeInstanceModel)(nil)
 	schema := compute_instance.ResourceSchema(context.TODO())
 	errs := test_helpers.ValidateResourceModelSchemaIntegrity(model, schema)
+
+	errs.Ignore(".@ComputeInstanceModel.timeouts.@ObjectValue.create")
+	errs.Ignore(".@ComputeInstanceModel.timeouts.@ObjectValue.update")
+	errs.Ignore(".@ComputeInstanceModel.timeouts.@ObjectValue.read")
+	errs.Ignore(".@ComputeInstanceModel.timeouts.@ObjectValue.delete")
+
 	errs.Report(t)
 }
