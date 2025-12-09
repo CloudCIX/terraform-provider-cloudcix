@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.4.1 (2025-12-09)
+
+Full Changelog: [v0.4.0...v0.4.1](https://github.com/CloudCIX/terraform-provider-cloudcix/compare/v0.4.0...v0.4.1)
+
+### Chores
+
+* **internal:** codegen related update ([aee837d](https://github.com/CloudCIX/terraform-provider-cloudcix/commit/aee837ddd13015a34fa85d1917d2eb4ebe0c7312))
+
 ## 0.4.0 (2025-12-08)
 
 Full Changelog: [v0.3.0...v0.4.0](https://github.com/CloudCIX/terraform-provider-cloudcix/compare/v0.3.0...v0.4.0)
