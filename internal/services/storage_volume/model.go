@@ -5,6 +5,7 @@ package storage_volume
 import (
 	"github.com/CloudCIX/terraform-provider-cloudcix/internal/apijson"
 	"github.com/CloudCIX/terraform-provider-cloudcix/internal/customfield"
+	"github.com/hashicorp/terraform-plugin-framework-timeouts/resource/timeouts"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
@@ -26,6 +27,7 @@ type StorageVolumeModel struct {
 	Uri             types.String                                                    `tfsdk:"uri" json:"uri,computed"`
 	ContraInstances customfield.NestedObjectList[StorageVolumeContraInstancesModel] `tfsdk:"contra_instances" json:"contra_instances,computed"`
 	Instance        customfield.NestedObject[StorageVolumeInstanceModel]            `tfsdk:"instance" json:"instance,computed"`
+	Timeouts        timeouts.Value                                                  `tfsdk:"timeouts"`
 }
 
 func (m StorageVolumeModel) MarshalJSON() (data []byte, err error) {

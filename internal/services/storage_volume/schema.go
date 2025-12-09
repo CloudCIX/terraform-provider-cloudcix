@@ -6,6 +6,7 @@ import (
 	"context"
 
 	"github.com/CloudCIX/terraform-provider-cloudcix/internal/customfield"
+	"github.com/hashicorp/terraform-plugin-framework-timeouts/resource/timeouts"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/int64planmodifier"
@@ -136,6 +137,13 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				},
 			},
 		},
+		"timeouts": timeouts.Attributes(ctx, timeouts.Opts{
+			Create: true,
+			Read:   true,
+			Update: true,
+			Delete: true,
+		}),
+	},
 	}
 }
 
