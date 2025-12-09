@@ -136,14 +136,13 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 					},
 				},
 			},
+			"timeouts": timeouts.Attributes(ctx, timeouts.Opts{
+				Create: true,
+				Read:   true,
+				Update: true,
+				Delete: true,
+			}),
 		},
-		"timeouts": timeouts.Attributes(ctx, timeouts.Opts{
-			Create: true,
-			Read:   true,
-			Update: true,
-			Delete: true,
-		}),
-	},
 	}
 }
 
