@@ -177,7 +177,25 @@ func (r *NetworkVpnResource) Read(ctx context.Context, req resource.ReadRequest,
 }
 
 func (r *NetworkVpnResource) Delete(ctx context.Context, req resource.DeleteRequest, resp *resource.DeleteResponse) {
+	var data *NetworkVpnModel
 
+	resp.Diagnostics.Append(req.State.Get(ctx, &data)...)
+
+	if resp.Diagnostics.HasError() {
+		return
+	}
+
+	err := r.client.Network.Vpns.Delete(
+		ctx,
+		data.ID.ValueInt64(),
+		option.WithMiddleware(logging.Middleware(ctx)),
+	)
+	if err != nil {
+		resp.Diagnostics.AddError("failed to make http request", err.Error())
+		return
+	}
+
+	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
 
 func (r *NetworkVpnResource) ImportState(ctx context.Context, req resource.ImportStateRequest, resp *resource.ImportStateResponse) {
@@ -219,20 +237,6 @@ func (r *NetworkVpnResource) ImportState(ctx context.Context, req resource.Impor
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
 
-func (r *NetworkVpnResource) ModifyPlan(ctx context.Context, req resource.ModifyPlanRequest, resp *resource.ModifyPlanResponse) {
-	if req.State.Raw.IsNull() {
-		resp.Diagnostics.AddWarning(
-			"Resource Destruction Considerations",
-			"This resource cannot be destroyed from Terraform. If you create this resource, it will be "+
-				"present in the API until manually deleted.",
-		)
-	}
-	if req.Plan.Raw.IsNull() {
-		resp.Diagnostics.AddWarning(
-			"Resource Destruction Considerations",
-			"Applying this resource destruction will remove the resource from the Terraform state "+
-				"but will not change it in the API. If you would like to destroy or reset this resource "+
-				"in the API, refer to the documentation for how to do it manually.",
-		)
-	}
+func (r *NetworkVpnResource) ModifyPlan(_ context.Context, _ resource.ModifyPlanRequest, _ *resource.ModifyPlanResponse) {
+
 }

@@ -70,11 +70,11 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						"ipv4": schema.StringAttribute{
 							Description: "The IPv4 address range of the network",
 							Computed:    true,
-							Optional:    true,
 						},
 						"ipv6": schema.StringAttribute{
 							Description: "The IPv6 address range of the network",
 							Computed:    true,
+							Optional:    true,
 						},
 						"name": schema.StringAttribute{
 							Description: "The name of the network",

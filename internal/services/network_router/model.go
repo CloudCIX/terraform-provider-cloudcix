@@ -44,8 +44,8 @@ type NetworkRouterMetadataModel struct {
 }
 
 type NetworkRouterNetworksModel struct {
-	Ipv4 types.String `tfsdk:"ipv4" json:"ipv4,computed_optional"`
-	Ipv6 types.String `tfsdk:"ipv6" json:"ipv6,computed"`
+	Ipv4 types.String `tfsdk:"ipv4" json:"ipv4,computed"`
+	Ipv6 types.String `tfsdk:"ipv6" json:"ipv6,computed_optional"`
 	Name types.String `tfsdk:"name" json:"name,optional"`
 	Vlan types.Int64  `tfsdk:"vlan" json:"vlan,computed"`
 }
