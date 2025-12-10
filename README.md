@@ -22,7 +22,7 @@ terraform {
   required_providers {
     cloudcix = {
       source  = "CloudCIX/cloudcix"
-      version = "~> 0.5.1"
+      version = "~> 0.6.0"
     }
   }
 }
