@@ -194,6 +194,61 @@ func (r *NetworkRouterResource) waitForRunningState(ctx context.Context, routerI
 	}
 }
 
+// waitForDeletion polls until the router is deleted (404) or reaches a terminal state
+func (r *NetworkRouterResource) waitForDeletion(ctx context.Context, routerID int64) error {
+	ticker := time.NewTicker(10 * time.Second)
+	defer ticker.Stop()
+
+	startTime := time.Now()
+
+	for {
+		select {
+		case <-ctx.Done():
+			return fmt.Errorf("timeout waiting for router to be deleted: %w", ctx.Err())
+		case <-ticker.C:
+			elapsed := time.Since(startTime)
+
+			res := new(http.Response)
+			_, err := r.client.Network.Routers.Get(
+				ctx,
+				routerID,
+				option.WithResponseBodyInto(&res),
+				option.WithMiddleware(logging.Middleware(ctx)),
+			)
+
+			// Resource deleted successfully (404)
+			if res != nil && res.StatusCode == 404 {
+				return nil
+			}
+
+			if err != nil {
+				return fmt.Errorf("failed to check router deletion status: %w", err)
+			}
+
+			bytes, _ := io.ReadAll(res.Body)
+			var env NetworkRouterContentEnvelope
+			err = apijson.Unmarshal(bytes, &env)
+			if err != nil {
+				return fmt.Errorf("failed to parse router state: %w", err)
+			}
+
+			state := env.Content.State.ValueString()
+
+			// Log current state with elapsed time
+			tflog.Debug(ctx, "Checking router deletion state", map[string]interface{}{
+				"router_id": routerID,
+				"state":     state,
+				"elapsed":   elapsed.String(),
+			})
+
+			// Check for error states
+			if state == "error" || state == "failed" {
+				return fmt.Errorf("router entered error state during deletion: %s", state)
+			}
+		}
+	}
+}
+
 func (r *NetworkRouterResource) Update(ctx context.Context, req resource.UpdateRequest, resp *resource.UpdateResponse) {
 	var data *NetworkRouterModel
 
@@ -287,6 +342,21 @@ func (r *NetworkRouterResource) Delete(ctx context.Context, req resource.DeleteR
 		return
 	}
 
+	// Get timeout from configuration
+	deleteTimeout, diags := data.Timeouts.Delete(ctx, 30*time.Minute)
+	resp.Diagnostics.Append(diags...)
+	if resp.Diagnostics.HasError() {
+		return
+	}
+
+	// Create context with timeout
+	ctx, cancel := context.WithTimeout(ctx, deleteTimeout)
+	defer cancel()
+
+	tflog.Info(ctx, "Deleting network router", map[string]interface{}{
+		"router_id": data.ID.ValueInt64(),
+	})
+
 	err := r.client.Network.Routers.Delete(
 		ctx,
 		data.ID.ValueInt64(),
@@ -297,7 +367,14 @@ func (r *NetworkRouterResource) Delete(ctx context.Context, req resource.DeleteR
 		return
 	}
 
-	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
+	// Wait for resource to be deleted
+	err = r.waitForDeletion(ctx, data.ID.ValueInt64())
+	if err != nil {
+		resp.Diagnostics.AddError("failed waiting for router to be deleted", err.Error())
+		return
+	}
+
+	tflog.Info(ctx, "Network router deleted successfully")
 }
 
 func (r *NetworkRouterResource) ImportState(ctx context.Context, req resource.ImportStateRequest, resp *resource.ImportStateResponse) {

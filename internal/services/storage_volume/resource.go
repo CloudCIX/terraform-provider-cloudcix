@@ -194,6 +194,61 @@ func (r *StorageVolumeResource) waitForRunningState(ctx context.Context, volumeI
 	}
 }
 
+// waitForDeletion polls until the volume is deleted (404) or reaches a terminal state
+func (r *StorageVolumeResource) waitForDeletion(ctx context.Context, volumeID int64) error {
+	ticker := time.NewTicker(10 * time.Second)
+	defer ticker.Stop()
+
+	startTime := time.Now()
+
+	for {
+		select {
+		case <-ctx.Done():
+			return fmt.Errorf("timeout waiting for volume to be deleted: %w", ctx.Err())
+		case <-ticker.C:
+			elapsed := time.Since(startTime)
+
+			res := new(http.Response)
+			_, err := r.client.Storage.Volumes.Get(
+				ctx,
+				volumeID,
+				option.WithResponseBodyInto(&res),
+				option.WithMiddleware(logging.Middleware(ctx)),
+			)
+
+			// Resource deleted successfully (404)
+			if res != nil && res.StatusCode == 404 {
+				return nil
+			}
+
+			if err != nil {
+				return fmt.Errorf("failed to check volume deletion status: %w", err)
+			}
+
+			bytes, _ := io.ReadAll(res.Body)
+			var env StorageVolumeContentEnvelope
+			err = apijson.Unmarshal(bytes, &env)
+			if err != nil {
+				return fmt.Errorf("failed to parse volume state: %w", err)
+			}
+
+			state := env.Content.State.ValueString()
+
+			// Log current state with elapsed time
+			tflog.Debug(ctx, "Checking volume deletion state", map[string]interface{}{
+				"volume_id": volumeID,
+				"state":     state,
+				"elapsed":   elapsed.String(),
+			})
+
+			// Check for error states
+			if state == "error" || state == "failed" {
+				return fmt.Errorf("volume entered error state during deletion: %s", state)
+			}
+		}
+	}
+}
+
 func (r *StorageVolumeResource) Update(ctx context.Context, req resource.UpdateRequest, resp *resource.UpdateResponse) {
 	var data *StorageVolumeModel
 

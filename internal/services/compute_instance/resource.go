@@ -194,6 +194,61 @@ func (r *ComputeInstanceResource) waitForRunningState(ctx context.Context, insta
 	}
 }
 
+// waitForDeletion polls until the instance is deleted (404) or reaches a terminal state
+func (r *ComputeInstanceResource) waitForDeletion(ctx context.Context, instanceID int64) error {
+	ticker := time.NewTicker(10 * time.Second)
+	defer ticker.Stop()
+
+	startTime := time.Now()
+
+	for {
+		select {
+		case <-ctx.Done():
+			return fmt.Errorf("timeout waiting for instance to be deleted: %w", ctx.Err())
+		case <-ticker.C:
+			elapsed := time.Since(startTime)
+
+			res := new(http.Response)
+			_, err := r.client.Compute.Instances.Get(
+				ctx,
+				instanceID,
+				option.WithResponseBodyInto(&res),
+				option.WithMiddleware(logging.Middleware(ctx)),
+			)
+
+			// Resource deleted successfully (404)
+			if res != nil && res.StatusCode == 404 {
+				return nil
+			}
+
+			if err != nil {
+				return fmt.Errorf("failed to check instance deletion status: %w", err)
+			}
+
+			bytes, _ := io.ReadAll(res.Body)
+			var env ComputeInstanceContentEnvelope
+			err = apijson.Unmarshal(bytes, &env)
+			if err != nil {
+				return fmt.Errorf("failed to parse instance state: %w", err)
+			}
+
+			state := env.Content.State.ValueString()
+
+			// Log current state with elapsed time
+			tflog.Debug(ctx, "Checking instance deletion state", map[string]interface{}{
+				"instance_id": instanceID,
+				"state":       state,
+				"elapsed":     elapsed.String(),
+			})
+
+			// Check for error states
+			if state == "error" || state == "failed" {
+				return fmt.Errorf("instance entered error state during deletion: %s", state)
+			}
+		}
+	}
+}
+
 func (r *ComputeInstanceResource) Update(ctx context.Context, req resource.UpdateRequest, resp *resource.UpdateResponse) {
 	var data *ComputeInstanceModel
 
