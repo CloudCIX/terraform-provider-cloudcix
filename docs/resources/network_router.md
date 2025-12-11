@@ -115,11 +115,11 @@ packet to.
 Optional:
 
 - `ipv4` (String) The IPv4 address range of the network
-- `ipv6` (String) The IPv6 address range of the network
 - `name` (String) The name of the network
 
 Read-Only:
 
+- `ipv6` (String) The IPv6 address range of the network
 - `vlan` (Number) The VLAN of the network
 
 
