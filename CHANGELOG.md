@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.8.2 (2025-12-11)
+
+Full Changelog: [v0.8.1...v0.8.2](https://github.com/CloudCIX/terraform-provider-cloudcix/compare/v0.8.1...v0.8.2)
+
 ## 0.8.1 (2025-12-11)
 
 Full Changelog: [v0.8.0...v0.8.1](https://github.com/CloudCIX/terraform-provider-cloudcix/compare/v0.8.0...v0.8.1)
