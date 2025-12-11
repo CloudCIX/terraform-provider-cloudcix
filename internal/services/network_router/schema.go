@@ -71,10 +71,16 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 							Description: "The IPv4 address range of the network",
 							Computed:    true,
 							Optional:    true,
+							PlanModifiers: []planmodifier.String{
+        						stringplanmodifier.UseStateForUnknown(),
+    						},
 						},
 						"ipv6": schema.StringAttribute{
 							Description: "The IPv6 address range of the network",
 							Computed:    true,
+							PlanModifiers: []planmodifier.String{
+        						stringplanmodifier.UseStateForUnknown(),
+    						},
 						},
 						"name": schema.StringAttribute{
 							Description: "The name of the network",
@@ -83,6 +89,9 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 						"vlan": schema.Int64Attribute{
 							Description: "The VLAN of the network",
 							Computed:    true,
+							PlanModifiers: []planmodifier.Int64{
+        						int64planmodifier.UseStateForUnknown(),
+    						},
 						},
 					},
 				},
