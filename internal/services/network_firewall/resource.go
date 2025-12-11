@@ -194,6 +194,61 @@ func (r *NetworkFirewallResource) waitForRunningState(ctx context.Context, firew
 	}
 }
 
+// waitForDeletion polls until the firewall is deleted (404) or reaches a terminal state
+func (r *NetworkFirewallResource) waitForDeletion(ctx context.Context, firewallID int64) error {
+	ticker := time.NewTicker(10 * time.Second)
+	defer ticker.Stop()
+
+	startTime := time.Now()
+
+	for {
+		select {
+		case <-ctx.Done():
+			return fmt.Errorf("timeout waiting for firewall to be deleted: %w", ctx.Err())
+		case <-ticker.C:
+			elapsed := time.Since(startTime)
+
+			res := new(http.Response)
+			_, err := r.client.Network.Firewalls.Get(
+				ctx,
+				firewallID,
+				option.WithResponseBodyInto(&res),
+				option.WithMiddleware(logging.Middleware(ctx)),
+			)
+
+			// Resource deleted successfully (404)
+			if res != nil && res.StatusCode == 404 {
+				return nil
+			}
+
+			if err != nil {
+				return fmt.Errorf("failed to check firewall deletion status: %w", err)
+			}
+
+			bytes, _ := io.ReadAll(res.Body)
+			var env NetworkFirewallContentEnvelope
+			err = apijson.Unmarshal(bytes, &env)
+			if err != nil {
+				return fmt.Errorf("failed to parse firewall state: %w", err)
+			}
+
+			state := env.Content.State.ValueString()
+
+			// Log current state with elapsed time
+			tflog.Debug(ctx, "Checking firewall deletion state", map[string]interface{}{
+				"firewall_id": firewallID,
+				"state":       state,
+				"elapsed":     elapsed.String(),
+			})
+
+			// Check for error states
+			if state == "error" || state == "failed" {
+				return fmt.Errorf("firewall entered error state during deletion: %s", state)
+			}
+		}
+	}
+}
+
 func (r *NetworkFirewallResource) Update(ctx context.Context, req resource.UpdateRequest, resp *resource.UpdateResponse) {
 	var data *NetworkFirewallModel
 
