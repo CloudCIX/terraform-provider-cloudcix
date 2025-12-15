@@ -24,6 +24,8 @@ var _ resource.ResourceWithConfigure = (*ComputeInstanceResource)(nil)
 var _ resource.ResourceWithModifyPlan = (*ComputeInstanceResource)(nil)
 var _ resource.ResourceWithImportState = (*ComputeInstanceResource)(nil)
 
+const pollInterval = 15 * time.Second
+
 func NewResource() resource.Resource {
 	return &ComputeInstanceResource{}
 }
@@ -143,7 +145,7 @@ func (r *ComputeInstanceResource) Create(ctx context.Context, req resource.Creat
 
 // waitForRunningState polls the instance until its state is "running"
 func (r *ComputeInstanceResource) waitForRunningState(ctx context.Context, instanceID int64) error {
-	ticker := time.NewTicker(10 * time.Second)
+	ticker := time.NewTicker(pollInterval)
 	defer ticker.Stop()
 
 	startTime := time.Now()
@@ -196,7 +198,7 @@ func (r *ComputeInstanceResource) waitForRunningState(ctx context.Context, insta
 
 // waitForDeletion polls until the instance is deleted (404) or reaches a terminal state
 func (r *ComputeInstanceResource) waitForDeletion(ctx context.Context, instanceID int64) error {
-	ticker := time.NewTicker(10 * time.Second)
+	ticker := time.NewTicker(pollInterval)
 	defer ticker.Stop()
 
 	startTime := time.Now()
@@ -342,6 +344,21 @@ func (r *ComputeInstanceResource) Delete(ctx context.Context, req resource.Delet
 		return
 	}
 
+	// Get timeout from configuration
+	deleteTimeout, diags := data.Timeouts.Delete(ctx, 30*time.Minute)
+	resp.Diagnostics.Append(diags...)
+	if resp.Diagnostics.HasError() {
+		return
+	}
+
+	// Create context with timeout
+	ctx, cancel := context.WithTimeout(ctx, deleteTimeout)
+	defer cancel()
+
+	tflog.Info(ctx, "Deleting compute instance", map[string]interface{}{
+		"instance_id": data.ID.ValueInt64(),
+	})
+
 	err := r.client.Compute.Instances.Delete(
 		ctx,
 		data.ID.ValueInt64(),
@@ -352,7 +369,14 @@ func (r *ComputeInstanceResource) Delete(ctx context.Context, req resource.Delet
 		return
 	}
 
-	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
+	// Wait for resource to be deleted
+	err = r.waitForDeletion(ctx, data.ID.ValueInt64())
+	if err != nil {
+		resp.Diagnostics.AddError("failed waiting for instance to be deleted", err.Error())
+		return
+	}
+
+	tflog.Info(ctx, "Compute Instance deleted successfully")
 }
 
 func (r *ComputeInstanceResource) ImportState(ctx context.Context, req resource.ImportStateRequest, resp *resource.ImportStateResponse) {
