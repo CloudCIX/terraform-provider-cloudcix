@@ -24,6 +24,8 @@ var _ resource.ResourceWithConfigure = (*NetworkFirewallResource)(nil)
 var _ resource.ResourceWithModifyPlan = (*NetworkFirewallResource)(nil)
 var _ resource.ResourceWithImportState = (*NetworkFirewallResource)(nil)
 
+const pollInterval = 15 * time.Second
+
 func NewResource() resource.Resource {
 	return &NetworkFirewallResource{}
 }
@@ -143,7 +145,7 @@ func (r *NetworkFirewallResource) Create(ctx context.Context, req resource.Creat
 
 // waitForRunningState polls the firewall until its state is "running"
 func (r *NetworkFirewallResource) waitForRunningState(ctx context.Context, firewallID int64) error {
-	ticker := time.NewTicker(10 * time.Second)
+	ticker := time.NewTicker(pollInterval)
 	defer ticker.Stop()
 
 	startTime := time.Now()
@@ -196,7 +198,7 @@ func (r *NetworkFirewallResource) waitForRunningState(ctx context.Context, firew
 
 // waitForDeletion polls until the firewall is deleted (404) or reaches a terminal state
 func (r *NetworkFirewallResource) waitForDeletion(ctx context.Context, firewallID int64) error {
-	ticker := time.NewTicker(10 * time.Second)
+	ticker := time.NewTicker(pollInterval)
 	defer ticker.Stop()
 
 	startTime := time.Now()
@@ -342,6 +344,21 @@ func (r *NetworkFirewallResource) Delete(ctx context.Context, req resource.Delet
 		return
 	}
 
+	// Get timeout from configuration
+	deleteTimeout, diags := data.Timeouts.Delete(ctx, 30*time.Minute)
+	resp.Diagnostics.Append(diags...)
+	if resp.Diagnostics.HasError() {
+		return
+	}
+
+	// Create context with timeout
+	ctx, cancel := context.WithTimeout(ctx, deleteTimeout)
+	defer cancel()
+
+	tflog.Info(ctx, "Deleting network firewall", map[string]interface{}{
+		"router_id": data.ID.ValueInt64(),
+	})
+
 	err := r.client.Network.Firewalls.Delete(
 		ctx,
 		data.ID.ValueInt64(),
@@ -352,7 +369,14 @@ func (r *NetworkFirewallResource) Delete(ctx context.Context, req resource.Delet
 		return
 	}
 
-	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
+	// Wait for resource to be deleted
+	err = r.waitForDeletion(ctx, data.ID.ValueInt64())
+	if err != nil {
+		resp.Diagnostics.AddError("failed waiting for firewall to be deleted", err.Error())
+		return
+	}
+
+	tflog.Info(ctx, "Network firewall deleted successfully")
 }
 
 func (r *NetworkFirewallResource) ImportState(ctx context.Context, req resource.ImportStateRequest, resp *resource.ImportStateResponse) {

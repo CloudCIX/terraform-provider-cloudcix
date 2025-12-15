@@ -24,6 +24,8 @@ var _ resource.ResourceWithConfigure = (*NetworkRouterResource)(nil)
 var _ resource.ResourceWithModifyPlan = (*NetworkRouterResource)(nil)
 var _ resource.ResourceWithImportState = (*NetworkRouterResource)(nil)
 
+const pollInterval = 15 * time.Second
+
 func NewResource() resource.Resource {
 	return &NetworkRouterResource{}
 }
@@ -143,7 +145,7 @@ func (r *NetworkRouterResource) Create(ctx context.Context, req resource.CreateR
 
 // waitForRunningState polls the router until its state is "running"
 func (r *NetworkRouterResource) waitForRunningState(ctx context.Context, routerID int64) error {
-	ticker := time.NewTicker(10 * time.Second)
+	ticker := time.NewTicker(pollInterval)
 	defer ticker.Stop()
 
 	startTime := time.Now()
@@ -196,7 +198,7 @@ func (r *NetworkRouterResource) waitForRunningState(ctx context.Context, routerI
 
 // waitForDeletion polls until the router is deleted (404) or reaches a terminal state
 func (r *NetworkRouterResource) waitForDeletion(ctx context.Context, routerID int64) error {
-	ticker := time.NewTicker(10 * time.Second)
+	ticker := time.NewTicker(pollInterval)
 	defer ticker.Stop()
 
 	startTime := time.Now()
