@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.10.5 (2026-01-15)
+
+Full Changelog: [v0.10.4...v0.10.5](https://github.com/CloudCIX/terraform-provider-cloudcix/compare/v0.10.4...v0.10.5)
+
 ## 0.10.4 (2026-01-15)
 
 Full Changelog: [v0.10.3...v0.10.4](https://github.com/CloudCIX/terraform-provider-cloudcix/compare/v0.10.3...v0.10.4)
