@@ -1,5 +1,15 @@
 # Changelog
 
+## 0.10.3 (2026-01-15)
+
+Full Changelog: [v0.10.2...v0.10.3](https://github.com/CloudCIX/terraform-provider-cloudcix/compare/v0.10.2...v0.10.3)
+
+### Chores
+
+* **internal:** codegen related update ([abf3844](https://github.com/CloudCIX/terraform-provider-cloudcix/commit/abf3844c41a8245a62648d119541f8d5d5162692))
+* **internal:** codegen related update ([26cb5b5](https://github.com/CloudCIX/terraform-provider-cloudcix/commit/26cb5b57f920a23cbf11282b1b2034837cf0efd7))
+* update Go SDK version ([f949972](https://github.com/CloudCIX/terraform-provider-cloudcix/commit/f949972b6d3fc84ef72a680aacceb9244d087d07))
+
 ## 0.10.2 (2025-12-18)
 
 Full Changelog: [v0.10.1...v0.10.2](https://github.com/CloudCIX/terraform-provider-cloudcix/compare/v0.10.1...v0.10.2)
