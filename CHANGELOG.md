@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.10.4 (2026-01-15)
+
+Full Changelog: [v0.10.3...v0.10.4](https://github.com/CloudCIX/terraform-provider-cloudcix/compare/v0.10.3...v0.10.4)
+
+### Chores
+
+* update gocloudcix dependency to v0.5.1 ([8bcb451](https://github.com/CloudCIX/terraform-provider-cloudcix/commit/8bcb451895a481c1ba6ec79c27c50761289587da))
+
 ## 0.10.3 (2026-01-15)
 
 Full Changelog: [v0.10.2...v0.10.3](https://github.com/CloudCIX/terraform-provider-cloudcix/compare/v0.10.2...v0.10.3)
