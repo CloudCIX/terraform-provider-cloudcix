@@ -5,7 +5,7 @@ go 1.23.0
 toolchain go1.23.9
 
 require (
-	github.com/CloudCIX/gocloudcix v0.0.0
+	github.com/CloudCIX/gocloudcix v0.5.0
 	github.com/davecgh/go-spew v1.1.1
 	github.com/hashicorp/terraform-plugin-docs v0.16.0
 	github.com/hashicorp/terraform-plugin-framework v1.15.0
@@ -74,5 +74,3 @@ require (
 	google.golang.org/grpc v1.72.1 // indirect
 	google.golang.org/protobuf v1.36.6 // indirect
 )
-
-replace github.com/CloudCIX/gocloudcix => github.com/stainless-sdks/gocloudcix-go v0.0.0-20260102100702-08869adf927b
