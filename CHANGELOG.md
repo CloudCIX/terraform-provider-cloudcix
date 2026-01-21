@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.10.6 (2026-01-21)
+
+Full Changelog: [v0.10.5...v0.10.6](https://github.com/CloudCIX/terraform-provider-cloudcix/compare/v0.10.5...v0.10.6)
+
+### Chores
+
+* bump dependency version ([a49a07b](https://github.com/CloudCIX/terraform-provider-cloudcix/commit/a49a07bb350f1c056b28bc6ade6627da2107778d))
+
 ## 0.10.5 (2026-01-15)
 
 Full Changelog: [v0.10.4...v0.10.5](https://github.com/CloudCIX/terraform-provider-cloudcix/compare/v0.10.4...v0.10.5)
