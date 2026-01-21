@@ -196,7 +196,7 @@ func (r *NetworkRouterResource) waitForRunningState(ctx context.Context, routerI
 	}
 }
 
-// waitForDeletion polls until the router is deleted (404) or reaches a terminal state
+// waitForDeletion polls until the router is deleted or reaches a terminal state
 func (r *NetworkRouterResource) waitForDeletion(ctx context.Context, routerID int64) error {
 	ticker := time.NewTicker(pollInterval)
 	defer ticker.Stop()
@@ -218,18 +218,14 @@ func (r *NetworkRouterResource) waitForDeletion(ctx context.Context, routerID in
 				option.WithMiddleware(logging.Middleware(ctx)),
 			)
 
-			// Resource deleted successfully (404)
-			if res != nil && res.StatusCode == 404 {
-				return nil
-			}
-
 			if err != nil {
-				return fmt.Errorf("failed to check router deletion status: %w", err)
+				return fmt.Errorf("failed to check router state: %w", err)
 			}
 
 			bytes, _ := io.ReadAll(res.Body)
 			var env NetworkRouterContentEnvelope
 			err = apijson.Unmarshal(bytes, &env)
+
 			if err != nil {
 				return fmt.Errorf("failed to parse router state: %w", err)
 			}
@@ -237,15 +233,19 @@ func (r *NetworkRouterResource) waitForDeletion(ctx context.Context, routerID in
 			state := env.Content.State.ValueString()
 
 			// Log current state with elapsed time
-			tflog.Debug(ctx, "Checking router deletion state", map[string]interface{}{
+			tflog.Debug(ctx, "Checking router state", map[string]interface{}{
 				"router_id": routerID,
 				"state":     state,
 				"elapsed":   elapsed.String(),
 			})
 
+			if state == "deleted" {
+				return nil
+			}
+
 			// Check for error states
-			if state == "error" || state == "failed" {
-				return fmt.Errorf("router entered error state during deletion: %s", state)
+			if state == "unresourced" {
+				return fmt.Errorf("router entered error state: %s", state)
 			}
 		}
 	}
