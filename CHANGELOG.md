@@ -1,5 +1,16 @@
 # Changelog
 
+## 0.10.7 (2026-01-22)
+
+Full Changelog: [v0.10.6...v0.10.7](https://github.com/CloudCIX/terraform-provider-cloudcix/compare/v0.10.6...v0.10.7)
+
+### Chores
+
+* bump dependency version ([270281e](https://github.com/CloudCIX/terraform-provider-cloudcix/commit/270281e5379093c958ff387592ed76fd3a1a87a2))
+* **internal:** codegen related update ([144c299](https://github.com/CloudCIX/terraform-provider-cloudcix/commit/144c2991ea432e56c00b5562f16a83a41c4ce202))
+* **internal:** codegen related update ([ca1c23a](https://github.com/CloudCIX/terraform-provider-cloudcix/commit/ca1c23a29f2e113aeeb8c504d9928abb53c10938))
+* **internal:** update `actions/checkout` version ([20c514a](https://github.com/CloudCIX/terraform-provider-cloudcix/commit/20c514a44dea2b74d8214fc3cce1f49168581f20))
+
 ## 0.10.6 (2026-01-21)
 
 Full Changelog: [v0.10.5...v0.10.6](https://github.com/CloudCIX/terraform-provider-cloudcix/compare/v0.10.5...v0.10.6)
