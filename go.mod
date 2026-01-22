@@ -3,7 +3,7 @@ module github.com/CloudCIX/terraform-provider-cloudcix
 go 1.24.0
 
 require (
-	github.com/CloudCIX/gocloudcix v0.5.2
+	github.com/CloudCIX/gocloudcix v0.5.3
 	github.com/davecgh/go-spew v1.1.1
 	github.com/hashicorp/terraform-plugin-docs v0.16.0
 	github.com/hashicorp/terraform-plugin-framework v1.15.0
