@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.11.0 (2026-01-29)
+
+Full Changelog: [v0.10.8...v0.11.0](https://github.com/CloudCIX/terraform-provider-cloudcix/compare/v0.10.8...v0.11.0)
+
+### Features
+
+* **cli:** improve shell completions for namespaced commands and flags ([288e0b2](https://github.com/CloudCIX/terraform-provider-cloudcix/commit/288e0b24b24de5845092e88a900fef778e1e2e42))
+
 ## 0.10.8 (2026-01-22)
 
 Full Changelog: [v0.10.7...v0.10.8](https://github.com/CloudCIX/terraform-provider-cloudcix/compare/v0.10.7...v0.10.8)
