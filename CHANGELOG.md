@@ -1,5 +1,20 @@
 # Changelog
 
+## 0.11.1 (2026-02-20)
+
+Full Changelog: [v0.11.0...v0.11.1](https://github.com/CloudCIX/terraform-provider-cloudcix/compare/v0.11.0...v0.11.1)
+
+### Bug Fixes
+
+* spurious update plans for float attributes after import ([014aee8](https://github.com/CloudCIX/terraform-provider-cloudcix/commit/014aee8214343f89956a734ae5c821519fae435a))
+
+
+### Chores
+
+* **internal:** codegen related update ([07f51f1](https://github.com/CloudCIX/terraform-provider-cloudcix/commit/07f51f1aed53f7a8e1169ebde5997137e76c09f1))
+* **internal:** codegen related update ([7972ea4](https://github.com/CloudCIX/terraform-provider-cloudcix/commit/7972ea47c5ea3e79aafcd2cad01df4eef711ccc0))
+* **internal:** remove mock server code ([b17b7e3](https://github.com/CloudCIX/terraform-provider-cloudcix/commit/b17b7e32922201f62ee5cc86cfdcd9ebcf9c068d))
+
 ## 0.11.0 (2026-01-29)
 
 Full Changelog: [v0.10.8...v0.11.0](https://github.com/CloudCIX/terraform-provider-cloudcix/compare/v0.10.8...v0.11.0)
