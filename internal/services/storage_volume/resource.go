@@ -24,6 +24,8 @@ var _ resource.ResourceWithConfigure = (*StorageVolumeResource)(nil)
 var _ resource.ResourceWithModifyPlan = (*StorageVolumeResource)(nil)
 var _ resource.ResourceWithImportState = (*StorageVolumeResource)(nil)
 
+const pollInterval = 15 * time.Second
+
 func NewResource() resource.Resource {
 	return &StorageVolumeResource{}
 }
@@ -143,7 +145,7 @@ func (r *StorageVolumeResource) Create(ctx context.Context, req resource.CreateR
 
 // waitForRunningState polls the volume until its state is "running"
 func (r *StorageVolumeResource) waitForRunningState(ctx context.Context, volumeID int64) error {
-	ticker := time.NewTicker(10 * time.Second)
+	ticker := time.NewTicker(pollInterval)
 	defer ticker.Stop()
 
 	startTime := time.Now()
@@ -194,9 +196,9 @@ func (r *StorageVolumeResource) waitForRunningState(ctx context.Context, volumeI
 	}
 }
 
-// waitForDeletion polls until the volume is deleted (404) or reaches a terminal state
+// waitForDeletion polls until the volume is deleted or reaches a terminal state
 func (r *StorageVolumeResource) waitForDeletion(ctx context.Context, volumeID int64) error {
-	ticker := time.NewTicker(10 * time.Second)
+	ticker := time.NewTicker(pollInterval)
 	defer ticker.Stop()
 
 	startTime := time.Now()
@@ -215,11 +217,6 @@ func (r *StorageVolumeResource) waitForDeletion(ctx context.Context, volumeID in
 				option.WithResponseBodyInto(&res),
 				option.WithMiddleware(logging.Middleware(ctx)),
 			)
-
-			// Resource deleted successfully (404)
-			if res != nil && res.StatusCode == 404 {
-				return nil
-			}
 
 			if err != nil {
 				return fmt.Errorf("failed to check volume deletion status: %w", err)
@@ -241,8 +238,12 @@ func (r *StorageVolumeResource) waitForDeletion(ctx context.Context, volumeID in
 				"elapsed":   elapsed.String(),
 			})
 
+			if state == "deleted" {
+				return nil
+			}
+
 			// Check for error states
-			if state == "error" || state == "failed" {
+			if state == "unresourced" {
 				return fmt.Errorf("volume entered error state during deletion: %s", state)
 			}
 		}
@@ -342,6 +343,21 @@ func (r *StorageVolumeResource) Delete(ctx context.Context, req resource.DeleteR
 		return
 	}
 
+	// Get timeout from configuration
+	deleteTimeout, diags := data.Timeouts.Delete(ctx, 30*time.Minute)
+	resp.Diagnostics.Append(diags...)
+	if resp.Diagnostics.HasError() {
+		return
+	}
+
+	// Create context with timeout
+	ctx, cancel := context.WithTimeout(ctx, deleteTimeout)
+	defer cancel()
+
+	tflog.Info(ctx, "Deleting storage volume", map[string]interface{}{
+		"volume_id": data.ID.ValueInt64(),
+	})
+
 	err := r.client.Storage.Volumes.Delete(
 		ctx,
 		data.ID.ValueInt64(),
@@ -352,7 +368,14 @@ func (r *StorageVolumeResource) Delete(ctx context.Context, req resource.DeleteR
 		return
 	}
 
-	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
+	// Wait for resource to be deleted
+	err = r.waitForDeletion(ctx, data.ID.ValueInt64())
+	if err != nil {
+		resp.Diagnostics.AddError("failed waiting for volume to be deleted", err.Error())
+		return
+	}
+
+	tflog.Info(ctx, "Storage volume deleted successfully")
 }
 
 func (r *StorageVolumeResource) ImportState(ctx context.Context, req resource.ImportStateRequest, resp *resource.ImportStateResponse) {
