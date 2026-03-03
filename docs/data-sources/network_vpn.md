@@ -3,12 +3,16 @@
 page_title: "cloudcix_network_vpn Data Source - cloudcix"
 subcategory: ""
 description: |-
-  
+  Management of Network VPNs
+  Supported Types are:
+  - site-to-site
 ---
 
 # cloudcix_network_vpn (Data Source)
 
-
+Management of Network VPNs
+Supported Types are:
+- site-to-site
 
 ## Example Usage
 

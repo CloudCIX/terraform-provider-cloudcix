@@ -14,6 +14,7 @@ var _ datasource.DataSourceWithConfigValidators = (*ComputeInstanceDataSource)(n
 
 func DataSourceSchema(ctx context.Context) schema.Schema {
 	return schema.Schema{
+		Description: "Management of Virtual Machine and Container Instances\n\nThis module provides API endpoints for managing compute instances in the CloudCIX Compute platform.\nCompute instances are virtual machines or containers that run workloads in the cloud. Two instance\ntypes are supported: LXD (Linux containers and VMs) and Hyper-V (Windows virtual machines).\n\nAvailable operations:\n- List and filter compute instances across your projects by type, state, or other attributes\n- Create new LXD or Hyper-V instances with specified resources, network interfaces, and OS images\n- Retrieve detailed configuration and status information for individual instances\n- Update instance specifications, network configuration, or change instance state (stop, restart, delete)\n\nEach instance includes its associated project, resource specifications (CPU, RAM, storage), network\ninterfaces, current state, and OS image information.\n\nAdditional Resources:\n- [Information on available SKUs](https://www.cix.ie/#/services/cloud/public_cloud)\n- [Cloud-init User Data Tutorial](https://docs.cloudcix.com/tutorials/cloudinit_userdata_tutorial.html)",
 		Attributes: map[string]schema.Attribute{
 			"id": schema.Int64Attribute{
 				Required: true,
