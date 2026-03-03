@@ -3,12 +3,40 @@
 page_title: "cloudcix_compute_backup Resource - cloudcix"
 subcategory: ""
 description: |-
-  
+  Management of Instance Backups
+  Supported backup types:
+  - "lxd" - LXD backups for Linux containers and VMs
+  - "hyperv" - Hyper-V backups for Windows VMs
+  This module provides API endpoints for managing backups of virtual machine and container instances
+  in the CloudCIX Compute platform. Backups are on-demand copies of running instances
+  stored in backup repositories for disaster recovery and data protection.
+  Available operations:
+  - List and filter backups across your projects by type, instance, or repository
+  - Create new backups from running LXD or Hyper-V instances
+  - Retrieve detailed information about individual backups including validity time
+  - Delete backups by updating their state to delete
+  Each backup includes its associated instance, project, repository location, and time valid timestamp.
 ---
 
 # cloudcix_compute_backup (Resource)
 
+Management of Instance Backups
 
+Supported backup types:
+- "lxd" - LXD backups for Linux containers and VMs
+- "hyperv" - Hyper-V backups for Windows VMs
+
+This module provides API endpoints for managing backups of virtual machine and container instances
+in the CloudCIX Compute platform. Backups are on-demand copies of running instances
+stored in backup repositories for disaster recovery and data protection.
+
+Available operations:
+- List and filter backups across your projects by type, instance, or repository
+- Create new backups from running LXD or Hyper-V instances
+- Retrieve detailed information about individual backups including validity time
+- Delete backups by updating their state to delete
+
+Each backup includes its associated instance, project, repository location, and time valid timestamp.
 
 ## Example Usage
 

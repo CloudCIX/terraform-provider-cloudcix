@@ -3,12 +3,26 @@
 page_title: "cloudcix_compute_image Data Source - cloudcix"
 subcategory: ""
 description: |-
-  
+  Management of Operating System Images
+  This module provides API endpoints for browsing available operating system images that can be
+  used when creating virtual instances in the CloudCIX Compute platform. Images represent
+  pre-configured OS templates including various Linux distributions and Windows versions.
+  Available operations:
+  - List and filter available OS images by region, name, or variant
+  - Retrieve detailed information about a specific image including its SKU and OS variant
 ---
 
 # cloudcix_compute_image (Data Source)
 
+Management of Operating System Images
 
+This module provides API endpoints for browsing available operating system images that can be
+used when creating virtual instances in the CloudCIX Compute platform. Images represent
+pre-configured OS templates including various Linux distributions and Windows versions.
+
+Available operations:
+- List and filter available OS images by region, name, or variant
+- Retrieve detailed information about a specific image including its SKU and OS variant
 
 ## Example Usage
 

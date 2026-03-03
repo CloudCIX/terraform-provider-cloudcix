@@ -3,12 +3,35 @@
 page_title: "cloudcix_project Resource - cloudcix"
 subcategory: ""
 description: |-
-  
+  Management of Cloud Projects
+  This module provides API endpoints for managing cloud projects in the CloudCIX Compute platform.
+  Projects are logical containers that organise and group your cloud infrastructure resources such as
+  virtual machines, routers, firewalls, and storage. Each project belongs to a specific region and
+  has its own isolated network environment.
+  Available operations:
+  - List and filter projects across your organization
+  - Create new projects in available cloud regions
+  - Retrieve detailed project information including region and manager
+  - Update project details such as name and notes
+  Each project includes its associated address, region, manager, and creation metadata.
 ---
 
 # cloudcix_project (Resource)
 
+Management of Cloud Projects
 
+This module provides API endpoints for managing cloud projects in the CloudCIX Compute platform.
+Projects are logical containers that organise and group your cloud infrastructure resources such as
+virtual machines, routers, firewalls, and storage. Each project belongs to a specific region and
+has its own isolated network environment.
+
+Available operations:
+- List and filter projects across your organization
+- Create new projects in available cloud regions
+- Retrieve detailed project information including region and manager
+- Update project details such as name and notes
+
+Each project includes its associated address, region, manager, and creation metadata.
 
 ## Example Usage
 

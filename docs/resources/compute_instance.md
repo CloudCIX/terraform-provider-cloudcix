@@ -3,12 +3,42 @@
 page_title: "cloudcix_compute_instance Resource - cloudcix"
 subcategory: ""
 description: |-
-  
+  Management of Virtual Machine and Container Instances
+  This module provides API endpoints for managing compute instances in the CloudCIX Compute platform.
+  Compute instances are virtual machines or containers that run workloads in the cloud. Two instance
+  types are supported: LXD (Linux containers and VMs) and Hyper-V (Windows virtual machines).
+  Available operations:
+  - List and filter compute instances across your projects by type, state, or other attributes
+  - Create new LXD or Hyper-V instances with specified resources, network interfaces, and OS images
+  - Retrieve detailed configuration and status information for individual instances
+  - Update instance specifications, network configuration, or change instance state (stop, restart, delete)
+  Each instance includes its associated project, resource specifications (CPU, RAM, storage), network
+  interfaces, current state, and OS image information.
+  Additional Resources:
+  - Information on available SKUs https://www.cix.ie/#/services/cloud/public_cloud
+  - Cloud-init User Data Tutorial https://docs.cloudcix.com/tutorials/cloudinit_userdata_tutorial.html
 ---
 
 # cloudcix_compute_instance (Resource)
 
+Management of Virtual Machine and Container Instances
 
+This module provides API endpoints for managing compute instances in the CloudCIX Compute platform.
+Compute instances are virtual machines or containers that run workloads in the cloud. Two instance
+types are supported: LXD (Linux containers and VMs) and Hyper-V (Windows virtual machines).
+
+Available operations:
+- List and filter compute instances across your projects by type, state, or other attributes
+- Create new LXD or Hyper-V instances with specified resources, network interfaces, and OS images
+- Retrieve detailed configuration and status information for individual instances
+- Update instance specifications, network configuration, or change instance state (stop, restart, delete)
+
+Each instance includes its associated project, resource specifications (CPU, RAM, storage), network
+interfaces, current state, and OS image information.
+
+Additional Resources:
+- [Information on available SKUs](https://www.cix.ie/#/services/cloud/public_cloud)
+- [Cloud-init User Data Tutorial](https://docs.cloudcix.com/tutorials/cloudinit_userdata_tutorial.html)
 
 ## Example Usage
 
