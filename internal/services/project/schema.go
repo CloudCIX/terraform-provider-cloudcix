@@ -15,6 +15,7 @@ var _ resource.ResourceWithConfigValidators = (*ProjectResource)(nil)
 
 func ResourceSchema(ctx context.Context) schema.Schema {
 	return schema.Schema{
+		Description: "Management of Cloud Projects\n\nThis module provides API endpoints for managing cloud projects in the CloudCIX Compute platform.\nProjects are logical containers that organise and group your cloud infrastructure resources such as\nvirtual machines, routers, firewalls, and storage. Each project belongs to a specific region and\nhas its own isolated network environment.\n\nAvailable operations:\n- List and filter projects across your organization\n- Create new projects in available cloud regions\n- Retrieve detailed project information including region and manager\n- Update project details such as name and notes\n\nEach project includes its associated address, region, manager, and creation metadata.",
 		Attributes: map[string]schema.Attribute{
 			"id": schema.Int64Attribute{
 				Description:   "The ID of the Project.",

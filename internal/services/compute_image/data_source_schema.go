@@ -13,6 +13,7 @@ var _ datasource.DataSourceWithConfigValidators = (*ComputeImageDataSource)(nil)
 
 func DataSourceSchema(ctx context.Context) schema.Schema {
 	return schema.Schema{
+		Description: "Management of Operating System Images\n\nThis module provides API endpoints for browsing available operating system images that can be\nused when creating virtual instances in the CloudCIX Compute platform. Images represent\npre-configured OS templates including various Linux distributions and Windows versions.\n\nAvailable operations:\n- List and filter available OS images by region, name, or variant\n- Retrieve detailed information about a specific image including its SKU and OS variant",
 		Attributes: map[string]schema.Attribute{
 			"id": schema.Int64Attribute{
 				Required: true,

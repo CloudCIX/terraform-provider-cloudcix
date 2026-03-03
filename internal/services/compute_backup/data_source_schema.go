@@ -14,6 +14,7 @@ var _ datasource.DataSourceWithConfigValidators = (*ComputeBackupDataSource)(nil
 
 func DataSourceSchema(ctx context.Context) schema.Schema {
 	return schema.Schema{
+		Description: "Management of Instance Backups\n\nSupported backup types:\n- \"lxd\" - LXD backups for Linux containers and VMs\n- \"hyperv\" - Hyper-V backups for Windows VMs\n\nThis module provides API endpoints for managing backups of virtual machine and container instances\nin the CloudCIX Compute platform. Backups are on-demand copies of running instances\nstored in backup repositories for disaster recovery and data protection.\n\nAvailable operations:\n- List and filter backups across your projects by type, instance, or repository\n- Create new backups from running LXD or Hyper-V instances\n- Retrieve detailed information about individual backups including validity time\n- Delete backups by updating their state to delete\n\nEach backup includes its associated instance, project, repository location, and time valid timestamp.",
 		Attributes: map[string]schema.Attribute{
 			"id": schema.Int64Attribute{
 				Required: true,

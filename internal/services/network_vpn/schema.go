@@ -17,6 +17,7 @@ var _ resource.ResourceWithConfigValidators = (*NetworkVpnResource)(nil)
 
 func ResourceSchema(ctx context.Context) schema.Schema {
 	return schema.Schema{
+		Description: "Management of Network VPNs\nSupported Types are:\n- site-to-site",
 		Attributes: map[string]schema.Attribute{
 			"id": schema.Int64Attribute{
 				Description:   "The ID of the Network VPN record",
