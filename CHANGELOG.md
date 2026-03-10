@@ -1,5 +1,14 @@
 # Changelog
 
+## 0.11.3 (2026-03-10)
+
+Full Changelog: [v0.11.2...v0.11.3](https://github.com/CloudCIX/terraform-provider-cloudcix/compare/v0.11.2...v0.11.3)
+
+### Chores
+
+* **docs:** update terraform-plugin-docs to v0.24.0 ([35e31a1](https://github.com/CloudCIX/terraform-provider-cloudcix/commit/35e31a177e25901f365d3b76eb574f40e51b5aa2))
+* **internal:** codegen related update ([7840ef9](https://github.com/CloudCIX/terraform-provider-cloudcix/commit/7840ef9690ee7ef9bbe3b7ade685d547168d0b4c))
+
 ## 0.11.2 (2026-02-26)
 
 Full Changelog: [v0.11.1...v0.11.2](https://github.com/CloudCIX/terraform-provider-cloudcix/compare/v0.11.1...v0.11.2)

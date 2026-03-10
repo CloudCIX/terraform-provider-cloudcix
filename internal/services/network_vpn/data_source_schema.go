@@ -14,6 +14,7 @@ var _ datasource.DataSourceWithConfigValidators = (*NetworkVpnDataSource)(nil)
 
 func DataSourceSchema(ctx context.Context) schema.Schema {
 	return schema.Schema{
+		Description: "Management of Network VPNs\nSupported Types are:\n- site-to-site",
 		Attributes: map[string]schema.Attribute{
 			"id": schema.Int64Attribute{
 				Required: true,
