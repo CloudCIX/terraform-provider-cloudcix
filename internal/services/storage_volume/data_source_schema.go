@@ -15,7 +15,7 @@ var _ datasource.DataSourceWithConfigValidators = (*StorageVolumeDataSource)(nil
 
 func DataSourceSchema(ctx context.Context) schema.Schema {
 	return schema.Schema{
-		Description: "Management of Storage Volumes\n\nStorage volumes provide additional storage capacity for compute instances.\n\nTwo types are supported:\n- CephFS: Network-attached file system volumes that can be mounted to multiple LXD instances\n- HyperV: Secondary drives attached to Hyper-V instances\n\nSKU Configuration:\nStorage capacity is specified using SKUs (Stock Keeping Units) with quantity in GB.\n- Ceph volumes use Ceph storage SKUs (CEPH_001 for HDD, CEPH_002 for SSD)\n- Hyper-V volumes use storage SKUs (e.g., SSD_001, HDD_001)\nAvailable SKUs depend on your region's configured devices.",
+		MarkdownDescription: "Management of Storage Volumes\n\nStorage volumes provide additional storage capacity for compute instances.\n\nTwo types are supported:\n- CephFS: Network-attached file system volumes that can be mounted to multiple LXD instances\n- HyperV: Secondary drives attached to Hyper-V instances\n\nSKU Configuration:\nStorage capacity is specified using SKUs (Stock Keeping Units) with quantity in GB.\n- Ceph volumes use Ceph storage SKUs (CEPH_001 for HDD, CEPH_002 for SSD)\n- Hyper-V volumes use storage SKUs (e.g., SSD_001, HDD_001)\nAvailable SKUs depend on your region's configured devices.",
 		Attributes: map[string]schema.Attribute{
 			"id": schema.Int64Attribute{
 				Required: true,
