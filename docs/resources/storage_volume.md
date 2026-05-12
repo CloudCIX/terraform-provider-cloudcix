@@ -5,11 +5,11 @@ subcategory: ""
 description: |-
   Management of Storage Volumes
   Storage volumes provide additional storage capacity for compute instances.
-  Two types are supported:
-  CephFS: Network-attached file system volumes that can be mounted to multiple LXD instancesHyperV: Secondary drives attached to Hyper-V instances
+  Three types are supported:
+  CephFS: Network-attached file system volumes that can be mounted to multiple LXD instancesCephRBD: Block Storage volume that can be mounted to a virtual-machine LXD instance.HyperV: Secondary drives attached to Hyper-V instances
   SKU Configuration:
   Storage capacity is specified using SKUs (Stock Keeping Units) with quantity in GB.
-  Ceph volumes use Ceph storage SKUs (CEPH_001 for HDD, CEPH_002 for SSD)Hyper-V volumes use storage SKUs (e.g., SSD_001, HDD_001)
+  Ceph volumes use Ceph storage SKUs (CEPH_001 for HDD, CEPH_002 for SSD)HyperV volumes use storage SKUs (e.g., SSD_001, HDD_001)
   Available SKUs depend on your region's configured devices.
 ---
 
@@ -19,14 +19,15 @@ Management of Storage Volumes
 
 Storage volumes provide additional storage capacity for compute instances.
 
-Two types are supported:
+Three types are supported:
 - CephFS: Network-attached file system volumes that can be mounted to multiple LXD instances
+- CephRBD: Block Storage volume that can be mounted to a virtual-machine LXD instance.
 - HyperV: Secondary drives attached to Hyper-V instances
 
 SKU Configuration:
 Storage capacity is specified using SKUs (Stock Keeping Units) with quantity in GB.
 - Ceph volumes use Ceph storage SKUs (CEPH_001 for HDD, CEPH_002 for SSD)
-- Hyper-V volumes use storage SKUs (e.g., SSD_001, HDD_001)
+- HyperV volumes use storage SKUs (e.g., SSD_001, HDD_001)
 Available SKUs depend on your region's configured devices.
 
 ## Example Usage
@@ -35,12 +36,12 @@ Available SKUs depend on your region's configured devices.
 resource "cloudcix_storage_volume" "example_storage_volume" {
   project_id = 1
   specs = [{
-    quantity = 500
-    sku_name = "CEPH_001"
+    quantity = 250
+    sku_name = "SSD_001"
   }]
-  instance_id = 0
-  name = "shared-data-volume"
-  type = "cephfs"
+  instance_id = 456
+  name = "additional-storage"
+  type = "hyperv"
 }
 ```
 
@@ -69,6 +70,9 @@ Users can only request state changes from certain current states:
 - `type` (String) The type of Storage Volume to create. Valid options are:
 - "cephfs"
   A Ceph file system volume which can be mounted to one or more Compute Instances of the type "lxd"
+- "cephrbd"
+  A Ceph block volume which can be mounted to one Compute Instances of the type "lxd" that is the
+  instance type "virtual-machine"
 - "hyperv"
   A volume which can be mounted as a secondary drive to a Compute Instance of the type "hyperv"
 

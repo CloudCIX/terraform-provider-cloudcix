@@ -26,8 +26,12 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 				Description: "Is a unique word to define each Image.",
 				Computed:    true,
 			},
+			"protocol": schema.StringAttribute{
+				Description: "The protocl for images supported by LXD Hypervisor device types.",
+				Computed:    true,
+			},
 			"sku_name": schema.StringAttribute{
-				Description: "The name of the Image.",
+				Description: "The SKU for the Image.",
 				Computed:    true,
 			},
 		},

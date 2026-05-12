@@ -35,10 +35,6 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Optional:      true,
 				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 			},
-			"name": schema.StringAttribute{
-				Description: "The user-friendly name for the Network Router.  If not sent and the type is \"router\", it will default to\nthe name 'Router'. If not sent and the type is \"static_route\", it will default to the name 'Static Route'.",
-				Optional:    true,
-			},
 			"state": schema.StringAttribute{
 				Description: "Change the state of the Network Router, triggering the CloudCIX Robot to perform the requested action.\n\nAvailable state transitions:\n\nFrom running state, you can transition to:\n- update_running - Apply pending configuration changes while keeping the router operational\n- delete - Mark the router for deletion (requires all other project resources to be deleted first)\n\nFrom delete_queue state, you can transition to:\n- restart - Restore a router that was previously marked for deletion\n\nNote: To delete a router, all other resources in the project must first be in one of these states:\ndelete, delete_queue, or deleting.",
 				Optional:    true,
@@ -103,6 +99,10 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 			},
 			"grace_period": schema.Int64Attribute{
 				Description: "Number of days after a user sets the state of the Router to Scrub (8) before it is executed by robot.\nThe default value is 7 days for a Router.",
+				Computed:    true,
+			},
+			"name": schema.StringAttribute{
+				Description: "The user-friendly name given to this Router Resource instance",
 				Computed:    true,
 			},
 			"updated": schema.StringAttribute{

@@ -17,10 +17,10 @@ type NetworkFirewallModel struct {
 	ID        types.Int64                                             `tfsdk:"id" json:"id,computed"`
 	ProjectID types.Int64                                             `tfsdk:"project_id" json:"project_id,required"`
 	Type      types.String                                            `tfsdk:"type" json:"type,optional"`
-	Name      types.String                                            `tfsdk:"name" json:"name,optional"`
 	State     types.String                                            `tfsdk:"state" json:"state,optional"`
 	Rules     *[]*NetworkFirewallRulesModel                           `tfsdk:"rules" json:"rules,optional"`
 	Created   types.String                                            `tfsdk:"created" json:"created,computed"`
+	Name      types.String                                            `tfsdk:"name" json:"name,computed"`
 	Updated   types.String                                            `tfsdk:"updated" json:"updated,computed"`
 	Uri       types.String                                            `tfsdk:"uri" json:"uri,computed"`
 	Specs     customfield.NestedObjectList[NetworkFirewallSpecsModel] `tfsdk:"specs" json:"specs,computed"`

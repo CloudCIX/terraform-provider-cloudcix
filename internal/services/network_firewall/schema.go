@@ -35,10 +35,6 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Optional:      true,
 				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 			},
-			"name": schema.StringAttribute{
-				Description: "The user-friendly name for the Network Firewall type. If not sent and the type is \"geo\", it will default\nto the name 'Geofilter'. If not sent and the type is \"project\", it will default to the name 'Firewall'.",
-				Optional:    true,
-			},
 			"state": schema.StringAttribute{
 				Description: "Change the state of the Network Firewall, triggering the CloudCIX Robot to perform the requested action.\nUsers can only request state changes from certain current states:\n\n- running -> update_running or delete",
 				Optional:    true,
@@ -89,6 +85,10 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 			},
 			"created": schema.StringAttribute{
 				Description: "Timestamp, in ISO format, of when the Network Firewall record was created.",
+				Computed:    true,
+			},
+			"name": schema.StringAttribute{
+				Description: "The user-friendly name given to this Network Firewall instance",
 				Computed:    true,
 			},
 			"updated": schema.StringAttribute{

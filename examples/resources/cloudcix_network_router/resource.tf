@@ -5,7 +5,6 @@ resource "cloudcix_network_router" "example_network_router" {
     nat = true
     nexthop = "nexthop"
   }
-  name = "Public Website Router"
   networks = [{
     ipv4 = "10.0.1.0/24"
     ipv6 = "ipv6"

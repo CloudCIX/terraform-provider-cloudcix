@@ -19,7 +19,7 @@ var _ resource.ResourceWithConfigValidators = (*StorageVolumeResource)(nil)
 
 func ResourceSchema(ctx context.Context) schema.Schema {
 	return schema.Schema{
-		MarkdownDescription: "Management of Storage Volumes\n\nStorage volumes provide additional storage capacity for compute instances.\n\nTwo types are supported:\n- CephFS: Network-attached file system volumes that can be mounted to multiple LXD instances\n- HyperV: Secondary drives attached to Hyper-V instances\n\nSKU Configuration:\nStorage capacity is specified using SKUs (Stock Keeping Units) with quantity in GB.\n- Ceph volumes use Ceph storage SKUs (CEPH_001 for HDD, CEPH_002 for SSD)\n- Hyper-V volumes use storage SKUs (e.g., SSD_001, HDD_001)\nAvailable SKUs depend on your region's configured devices.",
+		MarkdownDescription: "Management of Storage Volumes\n\nStorage volumes provide additional storage capacity for compute instances.\n\nThree types are supported:\n- CephFS: Network-attached file system volumes that can be mounted to multiple LXD instances\n- CephRBD: Block Storage volume that can be mounted to a virtual-machine LXD instance.\n- HyperV: Secondary drives attached to Hyper-V instances\n\nSKU Configuration:\nStorage capacity is specified using SKUs (Stock Keeping Units) with quantity in GB.\n- Ceph volumes use Ceph storage SKUs (CEPH_001 for HDD, CEPH_002 for SSD)\n- HyperV volumes use storage SKUs (e.g., SSD_001, HDD_001)\nAvailable SKUs depend on your region's configured devices.",
 		Attributes: map[string]schema.Attribute{
 			"id": schema.Int64Attribute{
 				Description:   "The ID of the Storage Volume record",
@@ -37,7 +37,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				PlanModifiers: []planmodifier.Int64{int64planmodifier.RequiresReplace()},
 			},
 			"type": schema.StringAttribute{
-				Description:   "The type of Storage Volume to create. Valid options are:\n- \"cephfs\"\n  A Ceph file system volume which can be mounted to one or more Compute Instances of the type \"lxd\"\n- \"hyperv\"\n  A volume which can be mounted as a secondary drive to a Compute Instance of the type \"hyperv\"",
+				Description:   "The type of Storage Volume to create. Valid options are:\n- \"cephfs\"\n  A Ceph file system volume which can be mounted to one or more Compute Instances of the type \"lxd\"\n- \"cephrbd\"\n  A Ceph block volume which can be mounted to one Compute Instances of the type \"lxd\" that is the\n  instance type \"virtual-machine\"\n- \"hyperv\"\n  A volume which can be mounted as a secondary drive to a Compute Instance of the type \"hyperv\"",
 				Optional:      true,
 				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 			},

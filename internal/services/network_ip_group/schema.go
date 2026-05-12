@@ -32,6 +32,10 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Required:    true,
 				ElementType: types.StringType,
 			},
+			"description": schema.StringAttribute{
+				Description: "An optional description for the IP Address Group.",
+				Optional:    true,
+			},
 			"version": schema.Int64Attribute{
 				Description: "The IP version of the IP Address Group Objects in the IP Address Group. Accepted versions are 4 and 6.\nIf not sent, it will default to 4.",
 				Optional:    true,

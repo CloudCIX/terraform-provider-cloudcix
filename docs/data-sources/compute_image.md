@@ -39,4 +39,5 @@ data "cloudcix_compute_image" "example_compute_image" {
 - `filename` (String) The name of the file containing the Image.
 - `id` (Number) The ID of this resource.
 - `os_variant` (String) Is a unique word to define each Image.
-- `sku_name` (String) The name of the Image.
+- `protocol` (String) The protocl for images supported by LXD Hypervisor device types.
+- `sku_name` (String) The SKU for the Image.

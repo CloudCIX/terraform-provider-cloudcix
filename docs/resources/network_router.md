@@ -65,7 +65,6 @@ resource "cloudcix_network_router" "example_network_router" {
     nat = true
     nexthop = "nexthop"
   }
-  name = "Public Website Router"
   networks = [{
     ipv4 = "10.0.1.0/24"
     ipv6 = "ipv6"
@@ -98,8 +97,6 @@ resource "cloudcix_network_router" "example_network_router" {
 - `metadata` (Attributes) Required if type is "static_route".
 
 Metadata for the Static Route resource. (see [below for nested schema](#nestedatt--metadata))
-- `name` (String) The user-friendly name for the Network Router.  If not sent and the type is "router", it will default to
-the name 'Router'. If not sent and the type is "static_route", it will default to the name 'Static Route'.
 - `networks` (Attributes List) Option if type is "router". If not sent, defaults will be applied.
 
 An array of the list of networks defined on the Router. To create a new network on the Network
@@ -132,6 +129,7 @@ delete, delete_queue, or deleting.
 - `grace_period` (Number) Number of days after a user sets the state of the Router to Scrub (8) before it is executed by robot.
 The default value is 7 days for a Router.
 - `id` (Number) The ID of the Router Resource record
+- `name` (String) The user-friendly name given to this Router Resource instance
 - `specs` (Attributes List) An array of the specs for the Router Resource (see [below for nested schema](#nestedatt--specs))
 - `updated` (String) Timestamp, in ISO format, of when the Router Resource record was last updated.
 - `uri` (String) URL that can be used to run methods in the API associated with the Network Routers instance.

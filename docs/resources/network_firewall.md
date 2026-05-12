@@ -72,7 +72,6 @@ Each firewall includes its associated project, router, rule definitions, and cur
 ```terraform
 resource "cloudcix_network_firewall" "example_network_firewall" {
   project_id = 1
-  name = "Allow Traffic from Ireland"
   rules = [{
     allow = true
     description = "description"
@@ -98,8 +97,6 @@ exactly ONE project firewall and ONE geo firewall maximum.
 
 ### Optional
 
-- `name` (String) The user-friendly name for the Network Firewall type. If not sent and the type is "geo", it will default
-to the name 'Geofilter'. If not sent and the type is "project", it will default to the name 'Firewall'.
 - `rules` (Attributes List) A list of the rules to be configured in the Network Firewall type. They will be applied in the order they
 are sent. (see [below for nested schema](#nestedatt--rules))
 - `state` (String) Change the state of the Network Firewall, triggering the CloudCIX Robot to perform the requested action.
@@ -119,6 +116,7 @@ Valid options are:
 
 - `created` (String) Timestamp, in ISO format, of when the Network Firewall record was created.
 - `id` (Number) The ID of the Network Firewall record
+- `name` (String) The user-friendly name given to this Network Firewall instance
 - `specs` (Attributes List) An array of the specs for the Network Firewall (see [below for nested schema](#nestedatt--specs))
 - `updated` (String) Timestamp, in ISO format, of when the Network Firewall record was last updated.
 - `uri` (String) URL that can be used to run methods in the API associated with the Network Firewall instance.

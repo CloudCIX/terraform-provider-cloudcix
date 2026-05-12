@@ -50,6 +50,7 @@ Examples:
 resource "cloudcix_network_ip_group" "example_network_ip_group" {
   cidrs = ["91.103.3.0/24", "90.103.2.36", "185.94.188.0/24"]
   name = "office-networks"
+  description = "description"
   version = 4
 }
 ```
@@ -69,6 +70,7 @@ underscores, and hyphens.
 
 ### Optional
 
+- `description` (String) An optional description for the IP Address Group.
 - `version` (Number) The IP version of the IP Address Group Objects in the IP Address Group. Accepted versions are 4 and 6.
 If not sent, it will default to 4.
 

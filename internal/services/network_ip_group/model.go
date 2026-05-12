@@ -12,14 +12,15 @@ type NetworkIPGroupContentEnvelope struct {
 }
 
 type NetworkIPGroupModel struct {
-	ID      types.Int64     `tfsdk:"id" json:"id,computed"`
-	Name    types.String    `tfsdk:"name" json:"name,required"`
-	Cidrs   *[]types.String `tfsdk:"cidrs" json:"cidrs,required"`
-	Version types.Int64     `tfsdk:"version" json:"version,optional"`
-	Created types.String    `tfsdk:"created" json:"created,computed"`
-	Type    types.String    `tfsdk:"type" json:"type,computed"`
-	Updated types.String    `tfsdk:"updated" json:"updated,computed"`
-	Uri     types.String    `tfsdk:"uri" json:"uri,computed"`
+	ID          types.Int64     `tfsdk:"id" json:"id,computed"`
+	Name        types.String    `tfsdk:"name" json:"name,required"`
+	Cidrs       *[]types.String `tfsdk:"cidrs" json:"cidrs,required"`
+	Description types.String    `tfsdk:"description" json:"description,optional,no_refresh"`
+	Version     types.Int64     `tfsdk:"version" json:"version,optional"`
+	Created     types.String    `tfsdk:"created" json:"created,computed"`
+	Type        types.String    `tfsdk:"type" json:"type,computed"`
+	Updated     types.String    `tfsdk:"updated" json:"updated,computed"`
+	Uri         types.String    `tfsdk:"uri" json:"uri,computed"`
 }
 
 func (m NetworkIPGroupModel) MarshalJSON() (data []byte, err error) {
