@@ -1,5 +1,42 @@
 # Changelog
 
+## 0.12.0 (2026-05-12)
+
+Full Changelog: [v0.11.3...v0.12.0](https://github.com/CloudCIX/terraform-provider-cloudcix/compare/v0.11.3...v0.12.0)
+
+### Features
+
+* add per-resource api permissions to schema description ([1db0c52](https://github.com/CloudCIX/terraform-provider-cloudcix/commit/1db0c526d02dc2729fcb289b03a569a033c56614))
+
+
+### Bug Fixes
+
+* **ci:** in custom setup-go, pass through go-version and cache-dependency-path ([2a3087f](https://github.com/CloudCIX/terraform-provider-cloudcix/commit/2a3087f048f22b97a24d70a3b92cd20007622423))
+* fall back to main branch if linking fails in CI ([95a01d4](https://github.com/CloudCIX/terraform-provider-cloudcix/commit/95a01d4c60a01e8f59a6f4d9317f8380f4270239))
+* fix for failing to drop invalid module replace in link script ([c4b38c9](https://github.com/CloudCIX/terraform-provider-cloudcix/commit/c4b38c9717651516dd95ce3e3f766c4d6a426c0c))
+* fix quoting typo ([cf02513](https://github.com/CloudCIX/terraform-provider-cloudcix/commit/cf02513d32cc3cb67ad754da2218f31a43b10175))
+* improve linking behavior when developing on a branch not in the Go SDK ([fa5c6d8](https://github.com/CloudCIX/terraform-provider-cloudcix/commit/fa5c6d81d79c4338d6c6399ed76c16d95708f31a))
+* improved workflow for developing on branches ([f3bc0cd](https://github.com/CloudCIX/terraform-provider-cloudcix/commit/f3bc0cd01aaa15f136a3177daefaba3bbeee382e))
+* no longer require an API key when building on production repos ([80e36f9](https://github.com/CloudCIX/terraform-provider-cloudcix/commit/80e36f98ba5ec9fe71d87a89e743643fd30431f7))
+* patch style requests should never send empty json body for objects ([2b7f8fc](https://github.com/CloudCIX/terraform-provider-cloudcix/commit/2b7f8fc536739b41f5be93d1e04dabbf31129815))
+* **tests:** update hc-install to fix PGP key mismatch ([ef1261c](https://github.com/CloudCIX/terraform-provider-cloudcix/commit/ef1261c8a94a4231ad4c4fd43b70ca6fb3687891))
+
+
+### Chores
+
+* add local tmpfile directory ([ebda1db](https://github.com/CloudCIX/terraform-provider-cloudcix/commit/ebda1db67eb86efbd742fb4fff5f4a87051c8865))
+* **internal:** codegen related update ([489c83f](https://github.com/CloudCIX/terraform-provider-cloudcix/commit/489c83fa529113dafedf65032c94cdd900f20cce))
+* **internal:** codegen related update ([9dc08c4](https://github.com/CloudCIX/terraform-provider-cloudcix/commit/9dc08c49b85da31f4361bff0eaa2fdf4ab0da4e0))
+* **internal:** codegen related update ([71a038b](https://github.com/CloudCIX/terraform-provider-cloudcix/commit/71a038b6b3a99429fc0def28f13fd7bdbdf04798))
+* **internal:** codegen related update ([e9624c5](https://github.com/CloudCIX/terraform-provider-cloudcix/commit/e9624c5bdae7e7f1f03620cb51faa8103ebedc04))
+* **internal:** codegen related update ([c783879](https://github.com/CloudCIX/terraform-provider-cloudcix/commit/c78387949b14a4f033f2880f77c5198b7a65bb2e))
+* **internal:** more robust bootstrap script ([65c1af5](https://github.com/CloudCIX/terraform-provider-cloudcix/commit/65c1af5b782156ce5096c672d118beb2fb8517ce))
+* **internal:** tweak CI branches ([f52f5d5](https://github.com/CloudCIX/terraform-provider-cloudcix/commit/f52f5d57c10f36c26d694de382442d24a4256bcc))
+* **internal:** update gitignore ([4608ecf](https://github.com/CloudCIX/terraform-provider-cloudcix/commit/4608ecf5ed34bbcb61b0e9fab9ee1c9d5763f07e))
+* pin go releaser version ([01b3e14](https://github.com/CloudCIX/terraform-provider-cloudcix/commit/01b3e140f1c1daa98245b7b9c327e7875d82a8ec))
+* update gocloudcix dependency to v0.10.0 ([dfd3bab](https://github.com/CloudCIX/terraform-provider-cloudcix/commit/dfd3bab1134f955a0dd876913ef9805156094d29))
+* update gocloudcix dependency to v0.9.0 ([a0117b4](https://github.com/CloudCIX/terraform-provider-cloudcix/commit/a0117b40f47a76f2b39a31caa50bfc2cb4221569))
+
 ## 0.11.3 (2026-03-10)
 
 Full Changelog: [v0.11.2...v0.11.3](https://github.com/CloudCIX/terraform-provider-cloudcix/compare/v0.11.2...v0.11.3)
