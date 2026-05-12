@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.13.0 (2026-05-12)
+
+Full Changelog: [v0.12.0...v0.13.0](https://github.com/CloudCIX/terraform-provider-cloudcix/compare/v0.12.0...v0.13.0)
+
+### Features
+
+* **api:** manual update to compute 5.0.4 ([e87dbce](https://github.com/CloudCIX/terraform-provider-cloudcix/commit/e87dbce34d9a3d6f89da63d5c641fc57f3738174))
+
 ## 0.12.0 (2026-05-12)
 
 Full Changelog: [v0.11.3...v0.12.0](https://github.com/CloudCIX/terraform-provider-cloudcix/compare/v0.11.3...v0.12.0)
