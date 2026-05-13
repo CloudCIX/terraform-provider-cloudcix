@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.15.0 (2026-05-13)
+
+Full Changelog: [v0.14.1...v0.15.0](https://github.com/CloudCIX/terraform-provider-cloudcix/compare/v0.14.1...v0.15.0)
+
+### Features
+
+* update CloudCIX provider configuration to include username, password, and region ID ([0b1aa0a](https://github.com/CloudCIX/terraform-provider-cloudcix/commit/0b1aa0a890e3cb3a28eccdb47a3da7d6cb0137c5))
+
 ## 0.14.1 (2026-05-13)
 
 Full Changelog: [v0.14.0...v0.14.1](https://github.com/CloudCIX/terraform-provider-cloudcix/compare/v0.14.0...v0.14.1)
