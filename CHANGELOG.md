@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.15.2 (2026-05-14)
+
+Full Changelog: [v0.15.1...v0.15.2](https://github.com/CloudCIX/terraform-provider-cloudcix/compare/v0.15.1...v0.15.2)
+
+### Bug Fixes
+
+* handle project deletion gracefully when project is already in `closed` ([ec5c1b1](https://github.com/CloudCIX/terraform-provider-cloudcix/commit/ec5c1b1dbd90e9b88388cb8b9cb7c3b5c087d522))
+
 ## 0.15.1 (2026-05-14)
 
 Full Changelog: [v0.15.0...v0.15.1](https://github.com/CloudCIX/terraform-provider-cloudcix/compare/v0.15.0...v0.15.1)
