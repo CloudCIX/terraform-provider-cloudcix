@@ -22,7 +22,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 			"id": schema.Int64Attribute{
 				Description:   "The ID of the Network VPN record",
 				Computed:      true,
-				PlanModifiers: []planmodifier.Int64{int64planmodifier.UseNonNullStateForUnknown()},
+				PlanModifiers: []planmodifier.Int64{int64planmodifier.UseStateForUnknown()},
 			},
 			"project_id": schema.Int64Attribute{
 				Description:   "The ID of the User's Project into which this Network VPN should be added.",
