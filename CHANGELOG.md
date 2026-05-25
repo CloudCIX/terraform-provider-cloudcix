@@ -1,5 +1,23 @@
 # Changelog
 
+## 0.16.0 (2026-05-25)
+
+Full Changelog: [v0.15.2...v0.16.0](https://github.com/CloudCIX/terraform-provider-cloudcix/compare/v0.15.2...v0.16.0)
+
+### Features
+
+* **api:** manual updates ([fc71ef9](https://github.com/CloudCIX/terraform-provider-cloudcix/commit/fc71ef9f1e5fbc52b206657628f03014e26a2257))
+
+
+### Bug Fixes
+
+* update PlanModifiers to use UseStateForUnknown for various resources ([23e4b50](https://github.com/CloudCIX/terraform-provider-cloudcix/commit/23e4b508a63c9bb8a50ff2464f835474a074a736))
+
+
+### Chores
+
+* update terraform-plugin-framework to v1.19.0 ([5b477a4](https://github.com/CloudCIX/terraform-provider-cloudcix/commit/5b477a47af71ba7831c11f83edb2ab4ed2bed69f))
+
 ## 0.15.2 (2026-05-14)
 
 Full Changelog: [v0.15.1...v0.15.2](https://github.com/CloudCIX/terraform-provider-cloudcix/compare/v0.15.1...v0.15.2)
