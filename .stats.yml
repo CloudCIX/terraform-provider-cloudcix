@@ -1,4 +1,4 @@
 configured_endpoints: 52
-openapi_spec_url: https://storage.googleapis.com/stainless-sdk-openapi-specs/cloudcix/gocloudcix-5a7ae9819b4c19e11f55ee14df8a576e94e23375ca0619547d663c486592d3dd.yml
+openapi_spec_url: https://storage.googleapis.com/stainless-sdk-openapi-specs/cloudcix/gocloudcix-d7e28be7980cdd8895c64f69cc12bcae17a91ab57fb8771ac4cc018d985d62f2.yml
 openapi_spec_hash: 41f393748350d2684ff897417b2da0f1
-config_hash: 2e5ce0ac2b6adc7f23840797b137f812
+config_hash: 28918d17ff41533f857e715095bad71d
