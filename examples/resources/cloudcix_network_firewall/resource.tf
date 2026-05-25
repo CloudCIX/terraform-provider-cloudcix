@@ -9,9 +9,7 @@ resource "cloudcix_network_firewall" "example_network_firewall" {
     port = "port"
     protocol = "protocol"
     source = "source"
-    zone = {
-
-    }
+    zone = "zone"
   }]
   type = "geo"
 }
