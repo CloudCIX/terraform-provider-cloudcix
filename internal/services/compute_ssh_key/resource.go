@@ -1,0 +1,198 @@
+// File generated from our OpenAPI spec by Stainless. See CONTRIBUTING.md for details.
+
+package compute_ssh_key
+
+import (
+	"context"
+	"fmt"
+	"io"
+	"net/http"
+
+	"github.com/CloudCIX/gocloudcix"
+	"github.com/CloudCIX/gocloudcix/option"
+	"github.com/CloudCIX/terraform-provider-cloudcix/internal/apijson"
+	"github.com/CloudCIX/terraform-provider-cloudcix/internal/importpath"
+	"github.com/CloudCIX/terraform-provider-cloudcix/internal/logging"
+	"github.com/hashicorp/terraform-plugin-framework/resource"
+	"github.com/hashicorp/terraform-plugin-framework/types"
+)
+
+// Ensure provider defined types fully satisfy framework interfaces.
+var _ resource.ResourceWithConfigure = (*ComputeSSHKeyResource)(nil)
+var _ resource.ResourceWithModifyPlan = (*ComputeSSHKeyResource)(nil)
+var _ resource.ResourceWithImportState = (*ComputeSSHKeyResource)(nil)
+
+func NewResource() resource.Resource {
+	return &ComputeSSHKeyResource{}
+}
+
+// ComputeSSHKeyResource defines the resource implementation.
+type ComputeSSHKeyResource struct {
+	client *gocloudcix.Client
+}
+
+func (r *ComputeSSHKeyResource) Metadata(ctx context.Context, req resource.MetadataRequest, resp *resource.MetadataResponse) {
+	resp.TypeName = req.ProviderTypeName + "_compute_ssh_key"
+}
+
+func (r *ComputeSSHKeyResource) Configure(ctx context.Context, req resource.ConfigureRequest, resp *resource.ConfigureResponse) {
+	if req.ProviderData == nil {
+		return
+	}
+
+	client, ok := req.ProviderData.(*gocloudcix.Client)
+
+	if !ok {
+		resp.Diagnostics.AddError(
+			"unexpected resource configure type",
+			fmt.Sprintf("Expected *gocloudcix.Client, got: %T. Please report this issue to the provider developers.", req.ProviderData),
+		)
+
+		return
+	}
+
+	r.client = client
+}
+
+func (r *ComputeSSHKeyResource) Create(ctx context.Context, req resource.CreateRequest, resp *resource.CreateResponse) {
+	var data *ComputeSSHKeyModel
+
+	resp.Diagnostics.Append(req.Plan.Get(ctx, &data)...)
+
+	if resp.Diagnostics.HasError() {
+		return
+	}
+
+	dataBytes, err := data.MarshalJSON()
+	if err != nil {
+		resp.Diagnostics.AddError("failed to serialize http request", err.Error())
+		return
+	}
+	res := new(http.Response)
+	env := ComputeSSHKeyContentEnvelope{*data}
+	_, err = r.client.Compute.SSHKeys.New(
+		ctx,
+		option.WithRequestBody("application/json", dataBytes),
+		option.WithResponseBodyInto(&res),
+		option.WithMiddleware(logging.Middleware(ctx)),
+	)
+	if err != nil {
+		resp.Diagnostics.AddError("failed to make http request", err.Error())
+		return
+	}
+	bytes, _ := io.ReadAll(res.Body)
+	err = apijson.UnmarshalComputed(bytes, &env)
+	if err != nil {
+		resp.Diagnostics.AddError("failed to deserialize http request", err.Error())
+		return
+	}
+	data = &env.Content
+
+	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
+}
+
+func (r *ComputeSSHKeyResource) Update(ctx context.Context, req resource.UpdateRequest, resp *resource.UpdateResponse) {
+	// Update is not supported for this resource
+}
+
+func (r *ComputeSSHKeyResource) Read(ctx context.Context, req resource.ReadRequest, resp *resource.ReadResponse) {
+	var data *ComputeSSHKeyModel
+
+	resp.Diagnostics.Append(req.State.Get(ctx, &data)...)
+
+	if resp.Diagnostics.HasError() {
+		return
+	}
+
+	res := new(http.Response)
+	env := ComputeSSHKeyContentEnvelope{*data}
+	_, err := r.client.Compute.SSHKeys.Get(
+		ctx,
+		data.ID.ValueInt64(),
+		option.WithResponseBodyInto(&res),
+		option.WithMiddleware(logging.Middleware(ctx)),
+	)
+	if res != nil && res.StatusCode == 404 {
+		resp.Diagnostics.AddWarning("Resource not found", "The resource was not found on the server and will be removed from state.")
+		resp.State.RemoveResource(ctx)
+		return
+	}
+	if err != nil {
+		resp.Diagnostics.AddError("failed to make http request", err.Error())
+		return
+	}
+	bytes, _ := io.ReadAll(res.Body)
+	err = apijson.Unmarshal(bytes, &env)
+	if err != nil {
+		resp.Diagnostics.AddError("failed to deserialize http request", err.Error())
+		return
+	}
+	data = &env.Content
+
+	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
+}
+
+func (r *ComputeSSHKeyResource) Delete(ctx context.Context, req resource.DeleteRequest, resp *resource.DeleteResponse) {
+	var data *ComputeSSHKeyModel
+
+	resp.Diagnostics.Append(req.State.Get(ctx, &data)...)
+
+	if resp.Diagnostics.HasError() {
+		return
+	}
+
+	err := r.client.Compute.SSHKeys.Delete(
+		ctx,
+		data.ID.ValueInt64(),
+		option.WithMiddleware(logging.Middleware(ctx)),
+	)
+	if err != nil {
+		resp.Diagnostics.AddError("failed to make http request", err.Error())
+		return
+	}
+
+	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
+}
+
+func (r *ComputeSSHKeyResource) ImportState(ctx context.Context, req resource.ImportStateRequest, resp *resource.ImportStateResponse) {
+	var data = new(ComputeSSHKeyModel)
+
+	path := int64(0)
+	diags := importpath.ParseImportID(
+		req.ID,
+		"<id>",
+		&path,
+	)
+	resp.Diagnostics.Append(diags...)
+	if resp.Diagnostics.HasError() {
+		return
+	}
+
+	data.ID = types.Int64Value(path)
+
+	res := new(http.Response)
+	env := ComputeSSHKeyContentEnvelope{*data}
+	_, err := r.client.Compute.SSHKeys.Get(
+		ctx,
+		path,
+		option.WithResponseBodyInto(&res),
+		option.WithMiddleware(logging.Middleware(ctx)),
+	)
+	if err != nil {
+		resp.Diagnostics.AddError("failed to make http request", err.Error())
+		return
+	}
+	bytes, _ := io.ReadAll(res.Body)
+	err = apijson.Unmarshal(bytes, &env)
+	if err != nil {
+		resp.Diagnostics.AddError("failed to deserialize http request", err.Error())
+		return
+	}
+	data = &env.Content
+
+	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
+}
+
+func (r *ComputeSSHKeyResource) ModifyPlan(_ context.Context, _ resource.ModifyPlanRequest, _ *resource.ModifyPlanResponse) {
+
+}
