@@ -2,6 +2,7 @@ resource "cloudcix_compute_instance" "example_compute_instance" {
   metadata = {
     dns = "dns"
     instance_type = "instance_type"
+    ssh_key_names = ["string"]
     userdata = "userdata"
   }
   project_id = 1
