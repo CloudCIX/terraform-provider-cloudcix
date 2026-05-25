@@ -72,7 +72,6 @@ func (r *ComputeSSHKeyResource) Create(ctx context.Context, req resource.CreateR
 	env := ComputeSSHKeyContentEnvelope{*data}
 	_, err = r.client.Compute.SSHKeys.New(
 		ctx,
-		gocloudcix.ComputeSSHKeyNewParams{},
 		option.WithRequestBody("application/json", dataBytes),
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),
