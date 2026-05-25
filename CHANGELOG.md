@@ -1,5 +1,14 @@
 # Changelog
 
+## 0.22.1 (2026-05-25)
+
+Full Changelog: [v0.22.0...v0.22.1](https://github.com/CloudCIX/terraform-provider-cloudcix/compare/v0.22.0...v0.22.1)
+
+### Bug Fixes
+
+* ensure private_key attribute is marked as sensitive in schema ([f11a169](https://github.com/CloudCIX/terraform-provider-cloudcix/commit/f11a16905c35919535e70987dc439f6abea87027))
+* mark private_key as sensitive in ComputeSSHKeyResource schema ([990dd62](https://github.com/CloudCIX/terraform-provider-cloudcix/commit/990dd623c337247b83178e824f252489076fe5af))
+
 ## 0.22.0 (2026-05-25)
 
 Full Changelog: [v0.21.0...v0.22.0](https://github.com/CloudCIX/terraform-provider-cloudcix/compare/v0.21.0...v0.22.0)
