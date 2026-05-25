@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.20.0 (2026-05-25)
+
+Full Changelog: [v0.19.0...v0.20.0](https://github.com/CloudCIX/terraform-provider-cloudcix/compare/v0.19.0...v0.20.0)
+
+### Features
+
+* **api:** manual updates ([25cec63](https://github.com/CloudCIX/terraform-provider-cloudcix/commit/25cec630ab0516b1cce99a281c61a72327d452db))
+
 ## 0.19.0 (2026-05-25)
 
 Full Changelog: [v0.18.0...v0.19.0](https://github.com/CloudCIX/terraform-provider-cloudcix/compare/v0.18.0...v0.19.0)
