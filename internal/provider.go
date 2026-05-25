@@ -15,6 +15,7 @@ import (
 	"github.com/CloudCIX/terraform-provider-cloudcix/internal/services/compute_image"
 	"github.com/CloudCIX/terraform-provider-cloudcix/internal/services/compute_instance"
 	"github.com/CloudCIX/terraform-provider-cloudcix/internal/services/compute_snapshot"
+	"github.com/CloudCIX/terraform-provider-cloudcix/internal/services/compute_ssh_key"
 	"github.com/CloudCIX/terraform-provider-cloudcix/internal/services/network_firewall"
 	"github.com/CloudCIX/terraform-provider-cloudcix/internal/services/network_ip_group"
 	"github.com/CloudCIX/terraform-provider-cloudcix/internal/services/network_router"
@@ -172,6 +173,7 @@ func (p *CloudcixProvider) Resources(ctx context.Context) []func() resource.Reso
 		compute_gpu.NewResource,
 		compute_instance.NewResource,
 		compute_snapshot.NewResource,
+		compute_ssh_key.NewResource,
 		network_firewall.NewResource,
 		network_ip_group.NewResource,
 		network_router.NewResource,
@@ -188,6 +190,7 @@ func (p *CloudcixProvider) DataSources(ctx context.Context) []func() datasource.
 		compute_image.NewComputeImageDataSource,
 		compute_instance.NewComputeInstanceDataSource,
 		compute_snapshot.NewComputeSnapshotDataSource,
+		compute_ssh_key.NewComputeSSHKeyDataSource,
 		network_firewall.NewNetworkFirewallDataSource,
 		network_ip_group.NewNetworkIPGroupDataSource,
 		network_router.NewNetworkRouterDataSource,
