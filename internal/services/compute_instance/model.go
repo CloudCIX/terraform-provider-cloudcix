@@ -37,9 +37,10 @@ func (m ComputeInstanceModel) MarshalJSONForUpdate(state ComputeInstanceModel) (
 }
 
 type ComputeInstanceMetadataModel struct {
-	DNS          types.String `tfsdk:"dns" json:"dns,optional"`
-	InstanceType types.String `tfsdk:"instance_type" json:"instance_type,optional"`
-	Userdata     types.String `tfsdk:"userdata" json:"userdata,optional"`
+	DNS          types.String    `tfsdk:"dns" json:"dns,optional"`
+	InstanceType types.String    `tfsdk:"instance_type" json:"instance_type,optional"`
+	SSHKeyNames  *[]types.String `tfsdk:"ssh_key_names" json:"ssh_key_names,optional,no_refresh"`
+	Userdata     types.String    `tfsdk:"userdata" json:"userdata,optional"`
 }
 
 type ComputeInstanceSpecsModel struct {

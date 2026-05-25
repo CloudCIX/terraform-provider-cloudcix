@@ -11,6 +11,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/int64planmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/planmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/stringplanmodifier"
+	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
 var _ resource.ResourceWithConfigValidators = (*ComputeInstanceResource)(nil)
@@ -45,6 +46,11 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 					"instance_type": schema.StringAttribute{
 						Description: "Optional, The Compute Instance instance type of the VM. Valid options\nare \"container\" or \"virtual-machine\". If not sent it will default to \"container\".",
 						Optional:    true,
+					},
+					"ssh_key_names": schema.ListAttribute{
+						Description: "Optional. A list of SSH key names (previously registered via POST /compute/ssh_keys/) to inject\ninto the instance during provisioning. The public keys are appended to `ssh_authorized_keys` for\nthe first sudo user defined in the cloud-init userdata. If no sudo user exists, an `administrator`\nuser is created automatically. Only supported for LXD instances with #cloud-config userdata.",
+						Optional:    true,
+						ElementType: types.StringType,
 					},
 					"userdata": schema.StringAttribute{
 						Description: "Cloud Init allows Mime Multi-part messages, or files that start with a given set of strings. It is\na requirement to configure at minimum one user with a password or ssh key that is in the sudo group.\n\nReference: https://cloudinit.readthedocs.io/en/latest/explanation/format.html\n\nA hashed password can be generated using `openssl passwd -6 'yourpassword'`\n\nExample:\n```yaml\n#cloud-config\nusers:\n  - name: administrator\n    groups: sudo\n    shell: /bin/bash\n    lock_passwd: false\n    passwd: < HASHED PASWWORD >\n    ssh_authorized_keys:\n      - < HASHED PASWWORD >\nchpasswd:\n  expire: false\nssh_pwauth: true\n```",
