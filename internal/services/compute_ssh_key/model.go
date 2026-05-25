@@ -13,10 +13,10 @@ type ComputeSSHKeyContentEnvelope struct {
 
 type ComputeSSHKeyModel struct {
 	ID         types.Int64  `tfsdk:"id" json:"id,computed"`
+	Name       types.String `tfsdk:"name" json:"name,required"`
+	PublicKey  types.String `tfsdk:"public_key" json:"public_key,optional"`
 	Created    types.String `tfsdk:"created" json:"created,computed"`
-	Name       types.String `tfsdk:"name" json:"name,computed"`
 	PrivateKey types.String `tfsdk:"private_key" json:"private_key,computed"`
-	PublicKey  types.String `tfsdk:"public_key" json:"public_key,computed"`
 }
 
 func (m ComputeSSHKeyModel) MarshalJSON() (data []byte, err error) {

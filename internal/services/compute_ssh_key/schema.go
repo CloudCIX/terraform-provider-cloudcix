@@ -9,6 +9,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/int64planmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/planmodifier"
+	"github.com/hashicorp/terraform-plugin-framework/resource/schema/stringplanmodifier"
 )
 
 var _ resource.ResourceWithConfigValidators = (*ComputeSSHKeyResource)(nil)
@@ -22,20 +23,22 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Computed:      true,
 				PlanModifiers: []planmodifier.Int64{int64planmodifier.UseStateForUnknown(), int64planmodifier.RequiresReplace()},
 			},
+			"name": schema.StringAttribute{
+				Description:   "A unique, user-friendly name for the SSH Key. Maximum 50 characters.",
+				Required:      true,
+				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
+			},
+			"public_key": schema.StringAttribute{
+				Description:   "Optional. The SSH public key to store. Must begin with a recognised key-type prefix (e.g. ssh-ed25519, ssh-rsa). If omitted, an Ed25519 key pair is generated automatically and the private key is returned once in the create response.",
+				Optional:      true,
+				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
+			},
 			"created": schema.StringAttribute{
 				Description: "Timestamp, in ISO format, of when the SSH Key record was created.",
 				Computed:    true,
 			},
-			"name": schema.StringAttribute{
-				Description: "The user-friendly name for the SSH Key.",
-				Computed:    true,
-			},
 			"private_key": schema.StringAttribute{
 				Description: "The PEM-encoded Ed25519 private key. Only present in the create (POST) response\nwhen no public_key was supplied and the key pair was auto-generated. Not stored\nby the API — save it immediately.",
-				Computed:    true,
-			},
-			"public_key": schema.StringAttribute{
-				Description: "The SSH public key string.",
 				Computed:    true,
 			},
 		},
