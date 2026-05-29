@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.22.2 (2026-05-29)
+
+Full Changelog: [v0.22.1...v0.22.2](https://github.com/CloudCIX/terraform-provider-cloudcix/compare/v0.22.1...v0.22.2)
+
+### Bug Fixes
+
+* **scripts:** export GOPRIVATE and use `go mod tidy -e` in scripts/generate-docs ([523fad3](https://github.com/CloudCIX/terraform-provider-cloudcix/commit/523fad3d29595688d5aeddb2c5360977031ea996))
+
 ## 0.22.1 (2026-05-25)
 
 Full Changelog: [v0.22.0...v0.22.1](https://github.com/CloudCIX/terraform-provider-cloudcix/compare/v0.22.0...v0.22.1)
