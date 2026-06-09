@@ -32,8 +32,10 @@ jobs:
         run: |
           STAGING_SHA=$(git rev-parse origin/main)
           PRODUCTION_SHA=$(git rev-parse production/main)
-          if [ "$STAGING_SHA" = "$PRODUCTION_SHA" ]; then
-            echo "Production is already at $STAGING_SHA. Nothing to release."
+          if git diff --quiet production/main origin/main; then
+            echo "Production tree is already in sync with staging."
+            echo "staging=$STAGING_SHA"
+            echo "production=$PRODUCTION_SHA"
             echo "synced=true" >> "$GITHUB_OUTPUT"
           else
             echo "synced=false" >> "$GITHUB_OUTPUT"
