@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.23.2](https://github.com/CloudCIX/terraform-provider-cloudcix/compare/v0.23.1...v0.23.2) (2026-06-09)
+
+
+### Chores
+
+* update gocloudcix dependency ([61b35eb](https://github.com/CloudCIX/terraform-provider-cloudcix/commit/61b35ebaf5dccfcb1e18f5a90fd6fb9b1659222b))
+
 ## [0.23.1](https://github.com/CloudCIX/terraform-provider-cloudcix/compare/v0.23.0...v0.23.1) (2026-06-09)
 
 
