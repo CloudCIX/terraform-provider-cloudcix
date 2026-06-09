@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.22.4 (2026-06-09)
+
+Full Changelog: [v0.22.3...v0.22.4](https://github.com/CloudCIX/terraform-provider-cloudcix/compare/v0.22.3...v0.22.4)
+
 ## 0.22.3 (2026-06-09)
 
 Full Changelog: [v0.22.2...v0.22.3](https://github.com/CloudCIX/terraform-provider-cloudcix/compare/v0.22.2...v0.22.3)
