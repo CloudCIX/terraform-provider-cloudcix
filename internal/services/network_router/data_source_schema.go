@@ -64,7 +64,7 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 								Computed:    true,
 							},
 							"address": schema.StringAttribute{
-								Description: "The IP address of the IPAddress record.",
+								Description: "The IPv4 address of the IPAddress record.",
 								Computed:    true,
 							},
 							"created": schema.StringAttribute{
@@ -120,7 +120,7 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 								Computed:    true,
 							},
 							"address": schema.StringAttribute{
-								Description: "The IP address of the IPAddress record.",
+								Description: "The IPv4 address of the IPAddress record.",
 								Computed:    true,
 							},
 							"created": schema.StringAttribute{
