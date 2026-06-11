@@ -24,7 +24,7 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 				Computed:    true,
 			},
 			"name": schema.StringAttribute{
-				Description: "The user-friendly name given to this Compute Backups instance",
+				Description: "The user-friendly display name given to this Compute Backups instance",
 				Computed:    true,
 			},
 			"project_id": schema.Int64Attribute{
