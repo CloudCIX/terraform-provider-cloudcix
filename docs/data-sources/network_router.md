@@ -100,7 +100,7 @@ Read-Only:
 - `address` (String) The IPv4 address of the IPAddress record.
 - `created` (String) Timestamp, in ISO format, of when the IPAddress record was created.
 - `id` (Number) The ID of the IPAddress record.
-- `name` (String) A verbose name given to the IPAddress record.
+- `name` (String) A human-readable name given to the IPAddress record.
 - `notes` (String) The note attached to IPAddress that made it.
 - `public_ip` (Attributes) (see [below for nested schema](#nestedatt--metadata--ipv4_address--public_ip))
 - `public_ip_id` (Number) The ID of the Public IPAddress record.
@@ -125,7 +125,7 @@ Read-Only:
 - `address` (String) The IPv4 address of the IPAddress record.
 - `created` (String) Timestamp, in ISO format, of when the IPAddress record was created.
 - `id` (Number) The ID of the IPAddress record.
-- `name` (String) A verbose name given to the IPAddress record.
+- `name` (String) A human-readable name given to the IPAddress record.
 - `notes` (String) The note attached to IPAddress that made it.
 - `public_ip` (Attributes) (see [below for nested schema](#nestedatt--metadata--ipv6_address--public_ip))
 - `public_ip_id` (Number) The ID of the Public IPAddress record.
