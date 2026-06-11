@@ -72,7 +72,7 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 								Computed:    true,
 							},
 							"name": schema.StringAttribute{
-								Description: "A verbose name given to the IPAddress record.",
+								Description: "A human-readable name given to the IPAddress record.",
 								Computed:    true,
 							},
 							"notes": schema.StringAttribute{
@@ -128,7 +128,7 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 								Computed:    true,
 							},
 							"name": schema.StringAttribute{
-								Description: "A verbose name given to the IPAddress record.",
+								Description: "A human-readable name given to the IPAddress record.",
 								Computed:    true,
 							},
 							"notes": schema.StringAttribute{
