@@ -95,6 +95,33 @@ func (e *mismatch) id() string {
 
 type codingerrors []codingerror
 
+func (errs *codingerrors) IgnoreAll(t *testing.T, paths ...string) {
+	acc := map[string]bool{}
+	for _, path := range paths {
+		acc[path] = false
+	}
+
+	*errs = slices.DeleteFunc(*errs, func(err codingerror) bool {
+		id := err.id()
+		if _, ok := acc[id]; ok {
+			acc[id] = true
+			return true
+		}
+		return false
+	})
+
+	unused := []string{}
+	for path, used := range acc {
+		if !used {
+			unused = append(unused, path)
+		}
+	}
+
+	if len(unused) > 0 {
+		t.Logf("Superfluous ignore paths: %v", unused)
+	}
+}
+
 func (errs *codingerrors) Ignore(t *testing.T, paths ...string) {
 	acc := map[string]any{}
 	for _, path := range paths {

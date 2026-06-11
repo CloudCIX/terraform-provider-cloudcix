@@ -13,7 +13,11 @@ description: |-
 
 ```terraform
 provider "cloudcix" {
-  api_key = "My API Key"
+  base_url  = "https://api.cloudcix.com/"
+  username  = "user@example.com"
+  password  = "your-password"
+  api_key   = "your-api-key"
+  region_id = 1
 }
 ```
 
@@ -22,5 +26,8 @@ provider "cloudcix" {
 
 ### Optional
 
-- `api_key` (String)
-- `base_url` (String) Set the base url that the provider connects to.
+- `api_key` (String, Sensitive) The CloudCIX API key. If omitted, the CLOUDCIX_API_KEY environment variable is used.
+- `base_url` (String) The CloudCIX API base URL. If omitted, the CLOUDCIX_API_URL environment variable is used.
+- `password` (String, Sensitive) The CloudCIX password. If omitted, the CLOUDCIX_API_PASSWORD environment variable is used.
+- `region_id` (Number) The default CloudCIX region ID. If omitted, the CLOUDCIX_REGION_ID environment variable is used.
+- `username` (String) The CloudCIX username (email). If omitted, the CLOUDCIX_API_USERNAME environment variable is used.

@@ -50,7 +50,7 @@ data "cloudcix_compute_backup" "example_compute_backup" {
 - `created` (String) Timestamp, in ISO format, of when the Compute Backups record was created.
 - `id` (Number) The ID of this resource.
 - `instance` (Attributes) The Compute Instance the Compute Backup record is of. (see [below for nested schema](#nestedatt--instance))
-- `name` (String) The user-friendly name given to this Compute Backups instance
+- `name` (String) The user-friendly display name given to this Compute Backups instance
 - `project_id` (Number) The id of the Project that this Compute Backups belongs to
 - `specs` (Attributes List) An array of the specs for the Compute Backups (see [below for nested schema](#nestedatt--specs))
 - `state` (String) The current state of the Compute Backups

@@ -7,6 +7,8 @@ import (
 	"os"
 
 	"github.com/CloudCIX/gocloudcix"
+	"github.com/CloudCIX/gocloudcix/auth"
+	"github.com/CloudCIX/gocloudcix/config"
 	"github.com/CloudCIX/gocloudcix/option"
 	"github.com/CloudCIX/terraform-provider-cloudcix/internal/services/compute_backup"
 	"github.com/CloudCIX/terraform-provider-cloudcix/internal/services/compute_gpu"
@@ -40,8 +42,11 @@ type CloudcixProvider struct {
 
 // CloudcixProviderModel describes the provider data model.
 type CloudcixProviderModel struct {
-	BaseURL types.String `tfsdk:"base_url" json:"base_url,optional"`
-	APIKey  types.String `tfsdk:"api_key" json:"api_key,optional"`
+	BaseURL  types.String `tfsdk:"base_url"`
+	APIKey   types.String `tfsdk:"api_key"`
+	Username types.String `tfsdk:"username"`
+	Password types.String `tfsdk:"password"`
+	RegionID types.Int64  `tfsdk:"region_id"`
 }
 
 func (p *CloudcixProvider) Metadata(ctx context.Context, req provider.MetadataRequest, resp *provider.MetadataResponse) {
@@ -53,11 +58,26 @@ func ProviderSchema(ctx context.Context) schema.Schema {
 	return schema.Schema{
 		Attributes: map[string]schema.Attribute{
 			"base_url": schema.StringAttribute{
-				Description: "Set the base url that the provider connects to.",
+				Description: "The CloudCIX API base URL. If omitted, the CLOUDCIX_API_URL environment variable is used.",
 				Optional:    true,
 			},
 			"api_key": schema.StringAttribute{
-				Optional: true,
+				Description: "The CloudCIX API key. If omitted, the CLOUDCIX_API_KEY environment variable is used.",
+				Optional:    true,
+				Sensitive:   true,
+			},
+			"username": schema.StringAttribute{
+				Description: "The CloudCIX username (email). If omitted, the CLOUDCIX_API_USERNAME environment variable is used.",
+				Optional:    true,
+			},
+			"password": schema.StringAttribute{
+				Description: "The CloudCIX password. If omitted, the CLOUDCIX_API_PASSWORD environment variable is used.",
+				Optional:    true,
+				Sensitive:   true,
+			},
+			"region_id": schema.Int64Attribute{
+				Description: "The default CloudCIX region ID. If omitted, the CLOUDCIX_REGION_ID environment variable is used.",
+				Optional:    true,
 			},
 		},
 	}
@@ -73,26 +93,67 @@ func (p *CloudcixProvider) Configure(ctx context.Context, req provider.Configure
 
 	resp.Diagnostics.Append(req.Config.Get(ctx, &data)...)
 
-	opts := []option.RequestOption{}
-
-	if !data.BaseURL.IsNull() && !data.BaseURL.IsUnknown() {
-		opts = append(opts, option.WithBaseURL(data.BaseURL.ValueString()))
-	} else if o, ok := os.LookupEnv("GOCLOUDCIX_BASE_URL"); ok {
-		opts = append(opts, option.WithBaseURL(o))
+	if resp.Diagnostics.HasError() {
+		return
 	}
 
-	if !data.APIKey.IsNull() && !data.APIKey.IsUnknown() {
-		opts = append(opts, option.WithAPIKey(data.APIKey.ValueString()))
-	} else if o, ok := os.LookupEnv("GOCLOUDCIX_API_KEY"); ok {
-		opts = append(opts, option.WithAPIKey(o))
-	} else {
-		resp.Diagnostics.AddAttributeError(
-			path.Root("api_key"),
-			"Missing api_key value",
-			"The api_key field is required. Set it in provider configuration or via the \"GOCLOUDCIX_API_KEY\" environment variable.",
+	// Load settings from environment variables
+	settings, err := config.LoadSettings()
+	if err != nil {
+		resp.Diagnostics.AddError(
+			"Failed to load settings",
+			"Could not load CloudCIX settings: "+err.Error(),
 		)
 		return
 	}
+
+	// Allow provider block to override environment variables
+	if !data.BaseURL.IsNull() && !data.BaseURL.IsUnknown() {
+		settings.CLOUDCIX_API_URL = data.BaseURL.ValueString()
+	} else if o, ok := os.LookupEnv("CLOUDCIX_BASE_URL"); ok {
+		// Backward compatibility for CLOUDCIX_BASE_URL
+		settings.CLOUDCIX_API_URL = o
+	}
+
+	if !data.APIKey.IsNull() && !data.APIKey.IsUnknown() {
+		settings.CLOUDCIX_API_KEY = data.APIKey.ValueString()
+	}
+
+	if !data.Username.IsNull() && !data.Username.IsUnknown() {
+		settings.CLOUDCIX_API_USERNAME = data.Username.ValueString()
+	}
+
+	if !data.Password.IsNull() && !data.Password.IsUnknown() {
+		settings.CLOUDCIX_API_PASSWORD = data.Password.ValueString()
+	}
+
+	if !data.RegionID.IsNull() && !data.RegionID.IsUnknown() {
+		settings.CLOUDCIX_REGION_ID = int(data.RegionID.ValueInt64())
+	}
+
+	opts := []option.RequestOption{}
+
+	// Determine authentication method
+	// 1. Auto Auth (Username + Password + API Key)
+	if settings.CLOUDCIX_API_USERNAME != "" && settings.CLOUDCIX_API_PASSWORD != "" && settings.CLOUDCIX_API_KEY != "" {
+		tokenManager := auth.NewTokenManager(settings)
+		opts = append(opts, auth.WithAutoAuth(tokenManager))
+	} else if settings.CLOUDCIX_API_KEY != "" {
+		// 2. Static Token Auth (API Key treated as Session Token)
+		// This supports the legacy behavior where api_key was the session token
+		opts = append(opts, option.WithAPIKey(settings.CLOUDCIX_API_KEY))
+	} else {
+		resp.Diagnostics.AddAttributeError(
+			path.Root("api_key"),
+			"Missing credentials",
+			"The provider requires either a settings file/env vars with full credentials (username, password, api_key) for auto-auth, or a static session token via api_key.",
+		)
+		return
+	}
+
+	// Set Base URL
+	// Use the Compute URL from settings which handles the subdomain logic
+	opts = append(opts, option.WithBaseURL(settings.ComputeURL()))
 
 	client := gocloudcix.NewClient(
 		opts...,

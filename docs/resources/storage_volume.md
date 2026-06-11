@@ -67,6 +67,7 @@ to the name 'Ceph'. If not sent and the type is "hyperv", it will default to the
 Users can only request state changes from certain current states:
 
 - running -> update_running or delete
+- `timeouts` (Attributes) (see [below for nested schema](#nestedatt--timeouts))
 - `type` (String) The type of Storage Volume to create. Valid options are:
 - "cephfs"
   A Ceph file system volume which can be mounted to one or more Compute Instances of the type "lxd"
@@ -104,6 +105,17 @@ mount this Ceph file system volume to. If not sent, it will default to an empty 
 - `detach_instance_ids` (List of Number) A list of IDs for running or stopped Compute Instances with the type "lxd" in the project to
 unmount this Ceph file system volume from. If not sent, it will default to an empty list.
 - `mount_path` (String) The mount path for the Ceph file system volume inside the LXC instance.
+
+
+<a id="nestedatt--timeouts"></a>
+### Nested Schema for `timeouts`
+
+Optional:
+
+- `create` (String) A string that can be [parsed as a duration](https://pkg.go.dev/time#ParseDuration) consisting of numbers and unit suffixes, such as "30s" or "2h45m". Valid time units are "s" (seconds), "m" (minutes), "h" (hours).
+- `delete` (String) A string that can be [parsed as a duration](https://pkg.go.dev/time#ParseDuration) consisting of numbers and unit suffixes, such as "30s" or "2h45m". Valid time units are "s" (seconds), "m" (minutes), "h" (hours). Setting a timeout for a Delete operation is only applicable if changes are saved into state before the destroy operation occurs.
+- `read` (String) A string that can be [parsed as a duration](https://pkg.go.dev/time#ParseDuration) consisting of numbers and unit suffixes, such as "30s" or "2h45m". Valid time units are "s" (seconds), "m" (minutes), "h" (hours). Read operations occur during any refresh or planning operation when refresh is enabled.
+- `update` (String) A string that can be [parsed as a duration](https://pkg.go.dev/time#ParseDuration) consisting of numbers and unit suffixes, such as "30s" or "2h45m". Valid time units are "s" (seconds), "m" (minutes), "h" (hours).
 
 
 <a id="nestedatt--contra_instances"></a>

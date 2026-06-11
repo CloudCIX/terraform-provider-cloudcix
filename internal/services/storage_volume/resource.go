@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"io"
 	"net/http"
+	"time"
 
 	"github.com/CloudCIX/gocloudcix"
 	"github.com/CloudCIX/gocloudcix/option"
@@ -15,12 +16,15 @@ import (
 	"github.com/CloudCIX/terraform-provider-cloudcix/internal/logging"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/types"
+	"github.com/hashicorp/terraform-plugin-log/tflog"
 )
 
 // Ensure provider defined types fully satisfy framework interfaces.
 var _ resource.ResourceWithConfigure = (*StorageVolumeResource)(nil)
 var _ resource.ResourceWithModifyPlan = (*StorageVolumeResource)(nil)
 var _ resource.ResourceWithImportState = (*StorageVolumeResource)(nil)
+
+const pollInterval = 15 * time.Second
 
 func NewResource() resource.Resource {
 	return &StorageVolumeResource{}
@@ -63,6 +67,19 @@ func (r *StorageVolumeResource) Create(ctx context.Context, req resource.CreateR
 		return
 	}
 
+	// Get timeout from configuration
+	createTimeout, diags := data.Timeouts.Create(ctx, 30*time.Minute)
+	resp.Diagnostics.Append(diags...)
+	if resp.Diagnostics.HasError() {
+		return
+	}
+
+	// Create context with timeout
+	ctx, cancel := context.WithTimeout(ctx, createTimeout)
+	defer cancel()
+
+	tflog.Info(ctx, "Creating storage volume")
+
 	dataBytes, err := data.MarshalJSON()
 	if err != nil {
 		resp.Diagnostics.AddError("failed to serialize http request", err.Error())
@@ -89,7 +106,148 @@ func (r *StorageVolumeResource) Create(ctx context.Context, req resource.CreateR
 	}
 	data = &env.Content
 
+	tflog.Info(ctx, "Storage volume created, waiting for running state", map[string]interface{}{
+		"volume_id": data.ID.ValueInt64(),
+	})
+
+	// Wait for state to become "running"
+	err = r.waitForRunningState(ctx, data.ID.ValueInt64())
+	if err != nil {
+		resp.Diagnostics.AddError("failed waiting for volume to reach running state", err.Error())
+		return
+	}
+
+	tflog.Info(ctx, "Storage volume is now running")
+
+	// Refresh data after state is running
+	res = new(http.Response)
+	env = StorageVolumeContentEnvelope{*data}
+	_, err = r.client.Storage.Volumes.Get(
+		ctx,
+		data.ID.ValueInt64(),
+		option.WithResponseBodyInto(&res),
+		option.WithMiddleware(logging.Middleware(ctx)),
+	)
+	if err != nil {
+		resp.Diagnostics.AddError("failed to read volume after creation", err.Error())
+		return
+	}
+	bytes, _ = io.ReadAll(res.Body)
+	err = apijson.UnmarshalComputed(bytes, &env)
+	if err != nil {
+		resp.Diagnostics.AddError("failed to deserialize http request", err.Error())
+		return
+	}
+	data = &env.Content
+
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
+}
+
+// waitForRunningState polls the volume until its state is "running"
+func (r *StorageVolumeResource) waitForRunningState(ctx context.Context, volumeID int64) error {
+	ticker := time.NewTicker(pollInterval)
+	defer ticker.Stop()
+
+	startTime := time.Now()
+
+	for {
+		select {
+		case <-ctx.Done():
+			return fmt.Errorf("timeout waiting for volume to reach running state: %w", ctx.Err())
+		case <-ticker.C:
+			elapsed := time.Since(startTime)
+
+			res := new(http.Response)
+			_, err := r.client.Storage.Volumes.Get(
+				ctx,
+				volumeID,
+				option.WithResponseBodyInto(&res),
+				option.WithMiddleware(logging.Middleware(ctx)),
+			)
+			if err != nil {
+				return fmt.Errorf("failed to check volume state: %w", err)
+			}
+
+			bytes, _ := io.ReadAll(res.Body)
+			var env StorageVolumeContentEnvelope
+			err = apijson.Unmarshal(bytes, &env)
+			if err != nil {
+				return fmt.Errorf("failed to parse volume state: %w", err)
+			}
+
+			state := env.Content.State.ValueString()
+
+			// Log current state with elapsed time
+			tflog.Debug(ctx, "Checking volume state", map[string]interface{}{
+				"volume_id": volumeID,
+				"state":     state,
+				"elapsed":   elapsed.String(),
+			})
+
+			if state == "running" {
+				return nil
+			}
+
+			// Check for error states
+			if state == "error" || state == "failed" {
+				return fmt.Errorf("volume entered error state: %s", state)
+			}
+		}
+	}
+}
+
+// waitForDeletion polls until the volume is deleted or reaches a terminal state
+func (r *StorageVolumeResource) waitForDeletion(ctx context.Context, volumeID int64) error {
+	ticker := time.NewTicker(pollInterval)
+	defer ticker.Stop()
+
+	startTime := time.Now()
+
+	for {
+		select {
+		case <-ctx.Done():
+			return fmt.Errorf("timeout waiting for volume to be deleted: %w", ctx.Err())
+		case <-ticker.C:
+			elapsed := time.Since(startTime)
+
+			res := new(http.Response)
+			_, err := r.client.Storage.Volumes.Get(
+				ctx,
+				volumeID,
+				option.WithResponseBodyInto(&res),
+				option.WithMiddleware(logging.Middleware(ctx)),
+			)
+
+			if err != nil {
+				return fmt.Errorf("failed to check volume deletion status: %w", err)
+			}
+
+			bytes, _ := io.ReadAll(res.Body)
+			var env StorageVolumeContentEnvelope
+			err = apijson.Unmarshal(bytes, &env)
+			if err != nil {
+				return fmt.Errorf("failed to parse volume state: %w", err)
+			}
+
+			state := env.Content.State.ValueString()
+
+			// Log current state with elapsed time
+			tflog.Debug(ctx, "Checking volume deletion state", map[string]interface{}{
+				"volume_id": volumeID,
+				"state":     state,
+				"elapsed":   elapsed.String(),
+			})
+
+			if state == "deleted" {
+				return nil
+			}
+
+			// Check for error states
+			if state == "unresourced" {
+				return fmt.Errorf("volume entered error state during deletion: %s", state)
+			}
+		}
+	}
 }
 
 func (r *StorageVolumeResource) Update(ctx context.Context, req resource.UpdateRequest, resp *resource.UpdateResponse) {
@@ -185,6 +343,21 @@ func (r *StorageVolumeResource) Delete(ctx context.Context, req resource.DeleteR
 		return
 	}
 
+	// Get timeout from configuration
+	deleteTimeout, diags := data.Timeouts.Delete(ctx, 30*time.Minute)
+	resp.Diagnostics.Append(diags...)
+	if resp.Diagnostics.HasError() {
+		return
+	}
+
+	// Create context with timeout
+	ctx, cancel := context.WithTimeout(ctx, deleteTimeout)
+	defer cancel()
+
+	tflog.Info(ctx, "Deleting storage volume", map[string]interface{}{
+		"volume_id": data.ID.ValueInt64(),
+	})
+
 	err := r.client.Storage.Volumes.Delete(
 		ctx,
 		data.ID.ValueInt64(),
@@ -195,7 +368,14 @@ func (r *StorageVolumeResource) Delete(ctx context.Context, req resource.DeleteR
 		return
 	}
 
-	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
+	// Wait for resource to be deleted
+	err = r.waitForDeletion(ctx, data.ID.ValueInt64())
+	if err != nil {
+		resp.Diagnostics.AddError("failed waiting for volume to be deleted", err.Error())
+		return
+	}
+
+	tflog.Info(ctx, "Storage volume deleted successfully")
 }
 
 func (r *StorageVolumeResource) ImportState(ctx context.Context, req resource.ImportStateRequest, resp *resource.ImportStateResponse) {

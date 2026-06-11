@@ -15,5 +15,17 @@ func TestStorageVolumeModelSchemaParity(t *testing.T) {
 	model := (*storage_volume.StorageVolumeModel)(nil)
 	schema := storage_volume.ResourceSchema(context.TODO())
 	errs := test_helpers.ValidateResourceModelSchemaIntegrity(model, schema)
+
+	ignore_list := []string{
+		".@StorageVolumeModel.timeouts.@ObjectValue.read",
+		".@StorageVolumeModel.timeouts.@ObjectValue.create",
+		".@StorageVolumeModel.timeouts.@ObjectValue.update",
+		".@StorageVolumeModel.timeouts.@ObjectValue.delete",
+	}
+
+	for _, item := range ignore_list {
+		errs.IgnoreAll(t, item)
+	}
+
 	errs.Report(t)
 }
