@@ -1,5 +1,17 @@
 # Changelog
 
+## [0.23.3](https://github.com/CloudCIX/terraform-provider-cloudcix/compare/v0.23.2...v0.23.3) (2026-06-11)
+
+
+### Bug Fixes
+
+* restore CloudCIX provider custom behavior ([bfb4fc4](https://github.com/CloudCIX/terraform-provider-cloudcix/commit/bfb4fc451fba6579b2f48e5a152d65350e8f190a))
+
+
+### Documentation
+
+* restore generated provider docs ([8171d13](https://github.com/CloudCIX/terraform-provider-cloudcix/commit/8171d132bf3cc1d25ac791363acab11c50267944))
+
 ## [0.23.2](https://github.com/CloudCIX/terraform-provider-cloudcix/compare/v0.23.1...v0.23.2) (2026-06-09)
 
 
