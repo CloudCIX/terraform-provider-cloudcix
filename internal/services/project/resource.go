@@ -191,11 +191,36 @@ func (r *ProjectResource) Delete(ctx context.Context, req resource.DeleteRequest
 		option.WithMiddleware(logging.Middleware(ctx)),
 	)
 	if err != nil {
+		if r.projectIsDeletedOrClosed(ctx, data.ID.ValueInt64()) {
+			return
+		}
 		resp.Diagnostics.AddError("failed to make http request", err.Error())
 		return
 	}
+}
 
-	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
+func (r *ProjectResource) projectIsDeletedOrClosed(ctx context.Context, projectID int64) bool {
+	res := new(http.Response)
+	_, err := r.client.Project.Get(
+		ctx,
+		projectID,
+		option.WithResponseBodyInto(&res),
+		option.WithMiddleware(logging.Middleware(ctx)),
+	)
+	if res != nil && res.StatusCode == 404 {
+		return true
+	}
+	if err != nil {
+		return false
+	}
+
+	bytes, _ := io.ReadAll(res.Body)
+	var env ProjectContentEnvelope
+	if apijson.Unmarshal(bytes, &env) != nil {
+		return false
+	}
+
+	return env.Content.Closed.ValueBool()
 }
 
 func (r *ProjectResource) ImportState(ctx context.Context, req resource.ImportStateRequest, resp *resource.ImportStateResponse) {
