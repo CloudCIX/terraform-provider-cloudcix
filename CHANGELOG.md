@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.23.4](https://github.com/CloudCIX/terraform-provider-cloudcix/compare/v0.23.3...v0.23.4) (2026-06-12)
+
+
+### Bug Fixes
+
+* preserve project destroy closed fallback ([777ca33](https://github.com/CloudCIX/terraform-provider-cloudcix/commit/777ca33f271d93bfdeb3bb646afba0d0b361c9ec))
+
 ## [0.23.3](https://github.com/CloudCIX/terraform-provider-cloudcix/compare/v0.23.2...v0.23.3) (2026-06-11)
 
 
