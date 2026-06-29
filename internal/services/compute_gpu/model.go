@@ -13,15 +13,16 @@ type ComputeGPUContentEnvelope struct {
 }
 
 type ComputeGPUModel struct {
-	ID        types.Int64                                        `tfsdk:"id" path:"id,required"`
-	Name      types.String                                       `tfsdk:"name" json:"name,optional"`
-	State     types.String                                       `tfsdk:"state" json:"state,optional"`
-	Created   types.String                                       `tfsdk:"created" json:"created,computed"`
-	ProjectID types.Int64                                        `tfsdk:"project_id" json:"project_id,computed"`
-	Updated   types.String                                       `tfsdk:"updated" json:"updated,computed"`
-	Uri       types.String                                       `tfsdk:"uri" json:"uri,computed"`
-	Instance  customfield.NestedObject[ComputeGPUInstanceModel]  `tfsdk:"instance" json:"instance,computed"`
-	Specs     customfield.NestedObjectList[ComputeGPUSpecsModel] `tfsdk:"specs" json:"specs,computed"`
+	ID         types.Int64                                        `tfsdk:"id" json:"id,computed"`
+	ProjectID  types.Int64                                        `tfsdk:"project_id" json:"project_id,required"`
+	InstanceID types.Int64                                        `tfsdk:"instance_id" json:"instance_id,required,no_refresh"`
+	Name       types.String                                       `tfsdk:"name" json:"name,optional"`
+	State      types.String                                       `tfsdk:"state" json:"state,optional"`
+	Specs      customfield.NestedObjectList[ComputeGPUSpecsModel] `tfsdk:"specs" json:"specs,required"`
+	Created    types.String                                       `tfsdk:"created" json:"created,computed"`
+	Updated    types.String                                       `tfsdk:"updated" json:"updated,computed"`
+	Uri        types.String                                       `tfsdk:"uri" json:"uri,computed"`
+	Instance   customfield.NestedObject[ComputeGPUInstanceModel]  `tfsdk:"instance" json:"instance,computed"`
 }
 
 func (m ComputeGPUModel) MarshalJSON() (data []byte, err error) {
@@ -29,7 +30,15 @@ func (m ComputeGPUModel) MarshalJSON() (data []byte, err error) {
 }
 
 func (m ComputeGPUModel) MarshalJSONForUpdate(state ComputeGPUModel) (data []byte, err error) {
-	return apijson.MarshalForUpdate(m, state)
+	return apijson.MarshalForUpdate(
+		ComputeGPUUpdateModel{Name: m.Name, State: m.State},
+		ComputeGPUUpdateModel{Name: state.Name, State: state.State},
+	)
+}
+
+type ComputeGPUUpdateModel struct {
+	Name  types.String `tfsdk:"name" json:"name,optional"`
+	State types.String `tfsdk:"state" json:"state,optional"`
 }
 
 type ComputeGPUInstanceModel struct {
@@ -40,5 +49,5 @@ type ComputeGPUInstanceModel struct {
 
 type ComputeGPUSpecsModel struct {
 	Quantity types.Int64  `tfsdk:"quantity" json:"quantity,computed"`
-	SKUName  types.String `tfsdk:"sku_name" json:"sku_name,computed"`
+	SKUName  types.String `tfsdk:"sku_name" json:"sku_name,optional"`
 }

@@ -4,6 +4,7 @@ package compute_gpu
 
 import (
 	"context"
+	"encoding/json"
 	"fmt"
 	"io"
 	"net/http"
@@ -13,6 +14,7 @@ import (
 	"github.com/CloudCIX/terraform-provider-cloudcix/internal/apijson"
 	"github.com/CloudCIX/terraform-provider-cloudcix/internal/importpath"
 	"github.com/CloudCIX/terraform-provider-cloudcix/internal/logging"
+	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
@@ -63,26 +65,31 @@ func (r *ComputeGPUResource) Create(ctx context.Context, req resource.CreateRequ
 		return
 	}
 
-	dataBytes, err := data.MarshalJSON()
-	if err != nil {
-		resp.Diagnostics.AddError("failed to serialize http request", err.Error())
+	params, diags := computeGPUAttachParams(ctx, data)
+	resp.Diagnostics.Append(diags...)
+	if resp.Diagnostics.HasError() {
 		return
 	}
-	res := new(http.Response)
+
 	env := ComputeGPUContentEnvelope{*data}
-	_, err = r.client.Compute.GPUs.Update(
+	gpu, err := r.client.Compute.GPUs.Attach(
 		ctx,
-		data.ID.ValueInt64(),
-		gocloudcix.ComputeGPUUpdateParams{},
-		option.WithRequestBody("application/json", dataBytes),
-		option.WithResponseBodyInto(&res),
+		params,
 		option.WithMiddleware(logging.Middleware(ctx)),
 	)
 	if err != nil {
 		resp.Diagnostics.AddError("failed to make http request", err.Error())
 		return
 	}
-	bytes, _ := io.ReadAll(res.Body)
+	if gpu == nil {
+		resp.Diagnostics.AddError("failed to make http request", "received empty response")
+		return
+	}
+	bytes, err := json.Marshal(gocloudcix.ComputeGPUResponse{Content: *gpu})
+	if err != nil {
+		resp.Diagnostics.AddError("failed to serialize http response", err.Error())
+		return
+	}
 	err = apijson.UnmarshalComputed(bytes, &env)
 	if err != nil {
 		resp.Diagnostics.AddError("failed to deserialize http request", err.Error())
@@ -91,6 +98,28 @@ func (r *ComputeGPUResource) Create(ctx context.Context, req resource.CreateRequ
 	data = &env.Content
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
+}
+
+func computeGPUAttachParams(ctx context.Context, data *ComputeGPUModel) (gocloudcix.ComputeGPUAttachParams, diag.Diagnostics) {
+	specs, diags := data.Specs.AsStructSliceT(ctx)
+	if diags.HasError() {
+		return gocloudcix.ComputeGPUAttachParams{}, diags
+	}
+
+	params := gocloudcix.ComputeGPUAttachParams{
+		InstanceID: data.InstanceID.ValueInt64(),
+		ProjectID:  data.ProjectID.ValueInt64(),
+		Specs:      make([]gocloudcix.ComputeGPUAttachParamsSpec, len(specs)),
+	}
+	if !data.Name.IsNull() && !data.Name.IsUnknown() {
+		params.Name = gocloudcix.String(data.Name.ValueString())
+	}
+	for i, spec := range specs {
+		if !spec.SKUName.IsNull() && !spec.SKUName.IsUnknown() {
+			params.Specs[i].SKUName = gocloudcix.String(spec.SKUName.ValueString())
+		}
+	}
+	return params, diags
 }
 
 func (r *ComputeGPUResource) Update(ctx context.Context, req resource.UpdateRequest, resp *resource.UpdateResponse) {

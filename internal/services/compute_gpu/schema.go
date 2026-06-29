@@ -9,6 +9,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/int64planmodifier"
+	"github.com/hashicorp/terraform-plugin-framework/resource/schema/listplanmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/planmodifier"
 )
 
@@ -19,8 +20,19 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 		MarkdownDescription: "Management of GPU Resources\n\nThis module provides API endpoints for managing GPU (Graphics Processing Unit) resources\nwithin the CloudCIX Compute platform. GPUs are physical hardware accelerators that can be\nattached to LXD instances to provide enhanced computational capabilities for workloads such\nas machine learning, AI training, scientific simulations, and graphics rendering.\n\nAvailable operations:\n- List and filter GPU resources across your projects\n- Attach GPUs to running LXD instances by creating new GPU resources\n- Retrieve individual GPU configuration and status details\n- Detach GPUs from instances by updating the state to delete\n\nEach GPU resource includes its associated LXD instance, capacity specifications (SKUs),\ncurrent state, and project information.",
 		Attributes: map[string]schema.Attribute{
 			"id": schema.Int64Attribute{
+				Description:   "The ID of the Compute GPU record",
+				Computed:      true,
+				PlanModifiers: []planmodifier.Int64{int64planmodifier.UseNonNullStateForUnknown()},
+			},
+			"project_id": schema.Int64Attribute{
+				Description:   "The ID of the Project which this GPU Resource should be in.",
 				Required:      true,
-				PlanModifiers: []planmodifier.Int64{int64planmodifier.UseNonNullStateForUnknown(), int64planmodifier.RequiresReplace()},
+				PlanModifiers: []planmodifier.Int64{int64planmodifier.RequiresReplace()},
+			},
+			"instance_id": schema.Int64Attribute{
+				Description:   "The ID of the LXD Resource the GPU is requested to be mounted to.",
+				Required:      true,
+				PlanModifiers: []planmodifier.Int64{int64planmodifier.RequiresReplace()},
 			},
 			"name": schema.StringAttribute{
 				Description: "The user-friendly name for the GPU Resource.",
@@ -32,10 +44,6 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 			},
 			"created": schema.StringAttribute{
 				Description: "Timestamp, in ISO format, of when the Compute GPU record was created.",
-				Computed:    true,
-			},
-			"project_id": schema.Int64Attribute{
-				Description: "The id of the Project that this Compute GPU belongs to",
 				Computed:    true,
 			},
 			"updated": schema.StringAttribute{
@@ -66,9 +74,10 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				},
 			},
 			"specs": schema.ListNestedAttribute{
-				Description: "An array of the specs for the Compute GPU",
-				Computed:    true,
-				CustomType:  customfield.NewNestedObjectListType[ComputeGPUSpecsModel](ctx),
+				Description:   "List of specs (SKUs) for the GPU resource.",
+				Required:      true,
+				CustomType:    customfield.NewNestedObjectListType[ComputeGPUSpecsModel](ctx),
+				PlanModifiers: []planmodifier.List{listplanmodifier.RequiresReplace()},
 				NestedObject: schema.NestedAttributeObject{
 					Attributes: map[string]schema.Attribute{
 						"quantity": schema.Int64Attribute{
@@ -76,8 +85,8 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 							Computed:    true,
 						},
 						"sku_name": schema.StringAttribute{
-							Description: "An identifier for a billable entity that a Resource utilises",
-							Computed:    true,
+							Description: "The name of the SKU for the GPU",
+							Optional:    true,
 						},
 					},
 				},
