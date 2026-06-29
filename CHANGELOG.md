@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.23.5](https://github.com/CloudCIX/terraform-provider-cloudcix/compare/v0.23.4...v0.23.5) (2026-06-29)
+
+
+### Bug Fixes
+
+* attach compute GPUs from Terraform ([af5f8fb](https://github.com/CloudCIX/terraform-provider-cloudcix/commit/af5f8fbbf0f5c64635285c2921f8e636f92c8a1b))
+
 ## [0.23.4](https://github.com/CloudCIX/terraform-provider-cloudcix/compare/v0.23.3...v0.23.4) (2026-06-12)
 
 
